@@ -45,7 +45,8 @@ if(isset($_COOKIE['user_id'])){
       <div class="box offer">
          <h3>become a tutor</h3>
          <p>Lorem ipsum dolor sit, amet consectetur adipisicing elit. Laborum, magnam!</p>
-         <a href="admin/register.php" class="inline-btn">get started</a>
+         <a href="admin/register.php" class="option-btn">register</a>
+         <a href="admin/login.php" class="option-btn">login</a>
       </div>
 
       <?php
@@ -80,6 +81,8 @@ if(isset($_COOKIE['user_id'])){
                <span><?= $fetch_tutor['profession']; ?></span>
             </div>
          </div>
+         <p>subjects : <span><?= $total_playlists; ?></span></p>
+         <p>total exams : <span><?= $total_contents ?></span></p>
          <p>playlists : <span><?= $total_playlists; ?></span></p>
          <p>total videos : <span><?= $total_contents ?></span></p>
          <p>total likes : <span><?= $total_likes ?></span></p>

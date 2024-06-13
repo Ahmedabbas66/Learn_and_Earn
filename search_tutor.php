@@ -74,6 +74,8 @@ if(isset($_COOKIE['user_id'])){
                <span><?= $fetch_tutor['profession']; ?></span>
             </div>
          </div>
+         <p>subjects : <span><?= $total_playlists; ?></span></p>
+         <p>total exams : <span><?= $total_contents ?></span></p>
          <p>playlists : <span><?= $total_playlists; ?></span></p>
          <p>total videos : <span><?= $total_contents ?></span></p>
          <p>total likes : <span><?= $total_likes ?></span></p>

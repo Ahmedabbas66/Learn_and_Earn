@@ -59,11 +59,17 @@ $total_comments = $select_comments->rowCount();
       </div>
 
       <div class="box">
-         <h3><?= $total_contents; ?></h3>
-         <p>total contents</p>
-         <a href="add_content.php" class="btn">add new content</a>
+         <h3><?= $total_playlists; ?></h3>
+         <p>total subject</p>
+         <a href="add_subject.php" class="btn">add new subject</a>
       </div>
-
+      
+      <div class="box">
+         <h3><?= $total_contents; ?></h3>
+         <p>total exams</p>
+         <a href="add_exam.php" class="btn">add new exam</a>
+      </div>
+      
       <div class="box">
          <h3><?= $total_playlists; ?></h3>
          <p>total playlists</p>
@@ -71,24 +77,23 @@ $total_comments = $select_comments->rowCount();
       </div>
 
       <div class="box">
+         <h3><?= $total_contents; ?></h3>
+         <p>total videos</p>
+         <a href="add_content.php" class="btn">add new video</a>
+      </div>
+
+
+
+      <!-- <div class="box">
          <h3><?= $total_likes; ?></h3>
          <p>total likes</p>
-         <a href="contents.php" class="btn">view contents</a>
-      </div>
+         <a href="contents.php" class="btn">view likes</a>
+      </div> -->
 
       <div class="box">
          <h3><?= $total_comments; ?></h3>
          <p>total comments</p>
          <a href="comments.php" class="btn">view comments</a>
-      </div>
-
-      <div class="box">
-         <h3>quick select</h3>
-         <p>login or register</p>
-         <div class="flex-btn">
-            <a href="login.php" class="option-btn">login</a>
-            <a href="register.php" class="option-btn">register</a>
-         </div>
       </div>
 
    </div>

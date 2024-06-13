@@ -60,19 +60,29 @@
       <div class="flex">
          <div class="box">
             <span><?= $total_playlists; ?></span>
-            <p>total playlists</p>
-            <a href="playlists.php" class="btn">view playlists</a>
+            <p>total subjects</p>
+            <a href="subjects.php" class="btn">view subjects</a>
          </div>
          <div class="box">
             <span><?= $total_contents; ?></span>
-            <p>total videos</p>
-            <a href="contents.php" class="btn">view contents</a>
+            <p>total exams</p>
+            <a href="exams.php" class="btn">view exams</a>
          </div>
          <div class="box">
+            <span><?= $total_playlists; ?></span>
+            <p>total playlists</p>
+            <a href="playlists.php" class="btn">view playlists</a>
+         </div>
+         <!-- <div class="box">
+            <span><?= $total_contents; ?></span>
+            <p>total videos</p>
+            <a href="contents.php" class="btn">view contents</a>
+         </div> -->
+         <!-- <div class="box">
             <span><?= $total_likes; ?></span>
             <p>total likes</p>
-            <a href="contents.php" class="btn">view contents</a>
-         </div>
+            <a href="contents.php" class="btn">view likes</a>
+         </div> -->
          <div class="box">
             <span><?= $total_comments; ?></span>
             <p>total comments</p>

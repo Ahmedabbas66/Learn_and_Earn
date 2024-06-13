@@ -15,7 +15,7 @@ if(isset($message)){
 
    <section class="flex">
 
-      <a href="dashboard.php" class="logo">Admin.</a>
+      <a href="dashboard.php" class="logo">Teacher</a>
 
       <form action="search_page.php" method="post" class="search-form">
          <input type="text" name="search" placeholder="search here..." required maxlength="100">
@@ -98,8 +98,9 @@ if(isset($message)){
 
    <nav class="navbar">
       <a href="dashboard.php"><i class="fas fa-home"></i><span>home</span></a>
+      <a href="subjects.php"><i class="fa-solid fa-pen-nib"></i><span>exams</span></a>
       <a href="playlists.php"><i class="fa-solid fa-bars-staggered"></i><span>playlists</span></a>
-      <a href="contents.php"><i class="fas fa-graduation-cap"></i><span>contents</span></a>
+      <!-- <a href="contents.php"><i class="fas fa-graduation-cap"></i><span>contents</span></a> -->
       <a href="comments.php"><i class="fas fa-comment"></i><span>comments</span></a>
       <a href="../components/admin_logout.php" onclick="return confirm('logout from this website?');"><i class="fas fa-right-from-bracket"></i><span>logout</span></a>
    </nav>

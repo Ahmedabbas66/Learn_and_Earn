@@ -66,7 +66,7 @@ if(isset($_POST['delete_video'])){
    <meta charset="UTF-8">
    <meta http-equiv="X-UA-Compatible" content="IE=edge">
    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-   <title>Playlist Details</title>
+   <title>Exams</title>
 
    <!-- font awesome cdn link  -->
    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.min.css">
@@ -81,7 +81,7 @@ if(isset($_POST['delete_video'])){
    
 <section class="playlist-details">
 
-   <h1 class="heading">playlist details</h1>
+   <h1 class="heading">subject details</h1>
 
    <?php
       $select_playlist = $conn->prepare("SELECT * FROM `playlist` WHERE id = ? AND tutor_id = ?");
@@ -104,16 +104,16 @@ if(isset($_POST['delete_video'])){
          <div class="description"><?= $fetch_playlist['description']; ?></div>
          <form action="" method="post" class="flex-btn">
             <input type="hidden" name="playlist_id" value="<?= $playlist_id; ?>">
-            <a href="update_playlist.php?get_id=<?= $playlist_id; ?>" class="option-btn">update playlist</a>
-            <input type="submit" value="delete playlist" class="delete-btn" onclick="return confirm('delete this playlist?');" name="delete">
+            <a href="update_subject.php?get_id=<?= $playlist_id; ?>" class="option-btn">update subject</a>
+            <input type="submit" value="delete subject" class="delete-btn" onclick="return confirm('delete this subject?');" name="delete">
          </form>
-         <a href="add_content.php" class="btn">add video</a>
+         <a href="add_exam.php" class="btn">add exam</a>
       </div>
    </div>
    <?php
          }
       }else{
-         echo '<p class="empty">no playlist found!</p>';
+         echo '<p class="empty">no subject found!</p>';
       }
    ?>
 
@@ -121,7 +121,7 @@ if(isset($_POST['delete_video'])){
 
 <section class="contents">
 
-   <h1 class="heading">playlist videos</h1>
+   <h1 class="heading">subject exams</h1>
 
    <div class="box-container">
 
@@ -149,7 +149,7 @@ if(isset($_POST['delete_video'])){
    <?php
          }
       }else{
-         echo '<p class="empty">no videos added yet! <a href="add_content.php" class="btn" style="margin-top: 1.5rem;">add videos</a></p>';
+         echo '<p class="empty">no exams added yet! <a href="add_exam.php" class="btn" style="margin-top: 1.5rem;">add exam</a></p>';
       }
    ?>
 

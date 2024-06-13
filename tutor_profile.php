@@ -73,6 +73,8 @@ if(isset($_POST['tutor_fetch'])){
          <span><?= $fetch_tutor['profession']; ?></span>
       </div>
       <div class="flex">
+         <p>total subjects : <span><?= $total_playlists; ?></span></p>
+         <p>total exams : <span><?= $total_contents; ?></span></p>
          <p>total playlists : <span><?= $total_playlists; ?></span></p>
          <p>total videos : <span><?= $total_contents; ?></span></p>
          <p>total likes : <span><?= $total_likes; ?></span></p>
@@ -83,6 +85,50 @@ if(isset($_POST['tutor_fetch'])){
 </section>
 
 <!-- teachers profile section ends -->
+
+<section class="courses">
+
+   <h1 class="heading">latest exams</h1>
+
+   <div class="box-container">
+
+      <?php
+         $select_courses = $conn->prepare("SELECT * FROM `playlist` WHERE tutor_id = ? AND status = ?");
+         $select_courses->execute([$tutor_id, 'active']);
+         if($select_courses->rowCount() > 0){
+            while($fetch_course = $select_courses->fetch(PDO::FETCH_ASSOC)){
+               $course_id = $fetch_course['id'];
+
+               $select_tutor = $conn->prepare("SELECT * FROM `tutors` WHERE id = ?");
+               $select_tutor->execute([$fetch_course['tutor_id']]);
+               $fetch_tutor = $select_tutor->fetch(PDO::FETCH_ASSOC);
+      ?>
+      <div class="box">
+         <div class="tutor">
+            <img src="uploaded_files/<?= $fetch_tutor['image']; ?>" alt="">
+            <div>
+               <h3><?= $fetch_tutor['name']; ?></h3>
+               <span><?= $fetch_course['date']; ?></span>
+            </div>
+         </div>
+         <img src="uploaded_files/<?= $fetch_course['thumb']; ?>" class="thumb" alt="">
+         <h3 class="title"><?= $fetch_course['title']; ?></h3>
+         <a href="subject.php?get_id=<?= $course_id; ?>" class="inline-btn">view subject</a>
+      </div>
+      <?php
+         }
+      }else{
+         echo '<p class="empty">no exams added yet!</p>';
+      }
+      ?>
+
+   </div>
+
+</section>
+
+<!-- courses section ends -->
+
+
 
 <section class="courses">
 
