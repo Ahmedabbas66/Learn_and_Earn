@@ -126,7 +126,7 @@ if(isset($_POST['update_now'])){
          ?>
       </div>
       <?php
-       }
+      }
       }else{
          echo '<p class="empty">no comments added yet!</p>';
       }

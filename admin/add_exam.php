@@ -9,45 +9,45 @@ $tutor_id = '';
 header('location:login.php');
 }
 
+
 if (isset($_POST['submit'])) {
+    $status = $_POST['status'];
+    $title = $_POST['title'];
+    $description = $_POST['description'];
+    $subject = $_POST['playlist'];
+    $time = $_POST['time'];
+    $date = $_POST['date'];
+    $duration = $_POST['duration'];
+    $degree = $_POST['degree'];
 
-$id = unique_id();
-$status = $_POST['status'];
-$status = filter_var($status, FILTER_SANITIZE_STRING);
-$title = $_POST['title'];
-$title = filter_var($title, FILTER_SANITIZE_STRING);
-$description = $_POST['description'];
-$description = filter_var($description, FILTER_SANITIZE_STRING);
-$playlist = $_POST['playlist'];
-$playlist = filter_var($playlist, FILTER_SANITIZE_STRING);
+    // Insert exam details into the database
+    $insert_exam = $conn->prepare("INSERT INTO exams (status, title, description, subject, time, date, duration, degree) VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
+    $insert_exam->execute([$status, $title, $description, $subject, $time, $date, $duration, $degree]);
 
-$thumb = $_FILES['thumb']['name'];
-$thumb = filter_var($thumb, FILTER_SANITIZE_STRING);
-$thumb_ext = pathinfo($thumb, PATHINFO_EXTENSION);
-$rename_thumb = unique_id() . '.' . $thumb_ext;
-$thumb_size = $_FILES['thumb']['size'];
-$thumb_tmp_name = $_FILES['thumb']['tmp_name'];
-$thumb_folder = '../uploaded_files/' . $rename_thumb;
+    $exam_id = $conn->lastInsertId();
 
-$video = $_FILES['video']['name'];
-$video = filter_var($video, FILTER_SANITIZE_STRING);
-$video_ext = pathinfo($video, PATHINFO_EXTENSION);
-$rename_video = unique_id() . '.' . $video_ext;
-$video_tmp_name = $_FILES['video']['tmp_name'];
-$video_folder = '../uploaded_files/' . $rename_video;
+    if (isset($_POST['questions']) && is_array($_POST['questions'])) {
+        foreach ($_POST['questions'] as $question) {
+            $question_text = $question['text'];
+            $insert_question = $conn->prepare("INSERT INTO questions (exam_id, text) VALUES (?, ?)");
+            $insert_question->execute([$exam_id, $question_text]);
 
-if ($thumb_size > 2000000) {
-    $message[] = 'image size is too large!';
-} else {
-    $add_playlist = $conn->prepare("INSERT INTO `content`(id, tutor_id, playlist_id, title, description, video, thumb, status) VALUES(?,?,?,?,?,?,?,?)");
-    $add_playlist->execute([$id, $tutor_id, $playlist, $title, $description, $rename_video, $rename_thumb, $status]);
-    move_uploaded_file($thumb_tmp_name, $thumb_folder);
-    move_uploaded_file($video_tmp_name, $video_folder);
-    $message[] = 'new course uploaded!';
+            $question_id = $conn->lastInsertId();
+
+            foreach ($question['options'] as $option_value => $option_text) {
+                $is_correct = ($question['correct'] == $option_value) ? 1 : 0;
+                $insert_option = $conn->prepare("INSERT INTO options (question_id, text, is_correct) VALUES (?, ?, ?)");
+                $insert_option->execute([$question_id, $option_text, $is_correct]);
+            }
+        }
+    }
+
+    echo "Exam created successfully!";
 }
-}
-
 ?>
+
+
+
 
 <!DOCTYPE html>
 <html lang="en">
@@ -147,12 +147,12 @@ if ($thumb_size > 2000000) {
             ?>
         </select>
         <p>select time and date <span>*</span></p>
-        <input type="time" required class="box">
-        <input type="date" required class="box">
+        <input type="time" name="time" required class="box">
+        <input type="date" name="date" required class="box">
         <p>select exam duration time in min <span>*</span></p>
-        <input type="number" required class="box">
+        <input type="number" name="duration" required class="box">
         <p>select exam degree <span>*</span></p>
-        <input type="number" required class="box">
+        <input type="number" name="degree" required class="box">
         <div id="componentContainer"></div>
         <input type="button" id="createButton" value="create question" class="btn">
         <input type="submit" value="upload exam" name="submit" class="btn">
@@ -195,26 +195,27 @@ if ($thumb_size > 2000000) {
             // Set the inner HTML of the new component
             newComponent.innerHTML = `
                 <p>Question ${number}</p>
-                <input type="text" placeholder="Enter your question here" required class="box">
+                <input type="text" name="questions[${number}][text]" placeholder="Enter your question here" required class="box">
                 <div class="options">
                     <div class="option">
-                        <p><input type="radio" name="question${number}" value="A"> A</p>
-                        <input type="text" placeholder="Option A" class="box">
+                        <p><input type="radio" name="questions[${number}][correct]" value="A"> A</p>
+                        <input type="text" name="questions[${number}][options][A]" placeholder="Option A" class="box">
                     </div>
                     <div class="option">
-                        <p><input type="radio" name="question${number}" value="B"> B</p>
-                        <input type="text" placeholder="Option B" class="box">
+                        <p><input type="radio" name="questions[${number}][correct]" value="B"> B</p>
+                        <input type="text" name="questions[${number}][options][B]" placeholder="Option B" class="box">
                     </div>
                     <div class="option">
-                        <p><input type="radio" name="question${number}" value="C"> C</p>
-                        <input type="text" placeholder="Option C" class="box">
+                        <p><input type="radio" name="questions[${number}][correct]" value="C"> C</p>
+                        <input type="text" name="questions[${number}][options][C]" placeholder="Option C" class="box">
                     </div>
                     <div class="option">
-                        <p><input type="radio" name="question${number}" value="D"> D</p>
-                        <input type="text" placeholder="Option D" class="box">
+                        <p><input type="radio" name="questions[${number}][correct]" value="D"> D</p>
+                        <input type="text" name="questions[${number}][options][D]" placeholder="Option D" class="box">
                     </div>
                 </div>
                 <button class="delete-btn" onclick="deleteQuestion(this)"><i class="fa-solid fa-trash"></i><span> delete question</span></button>
+
             `;
 
             // Append the new component to the container
