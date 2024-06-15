@@ -42,7 +42,9 @@ if (isset($_POST['submit'])) {
         }
     }
 
-    echo "Exam created successfully!";
+    $message[] = 'New Exam created successfully!';
+
+    // echo "Exam created successfully!";
 }
 ?>
 
@@ -136,7 +138,7 @@ if (isset($_POST['submit'])) {
             if ($select_playlists->rowCount() > 0) {
                 while ($fetch_playlist = $select_playlists->fetch(PDO::FETCH_ASSOC)) {
             ?>
-                    <option value="<?= $fetch_playlist['id']; ?>"><?= $fetch_playlist['title']; ?></option>
+                    <option value="<?= $fetch_playlist['title']; ?>"><?= $fetch_playlist['title']; ?></option>
                 <?php
                 }
                 ?>
@@ -149,6 +151,7 @@ if (isset($_POST['submit'])) {
         <p>select time and date <span>*</span></p>
         <input type="time" name="time" required class="box">
         <input type="date" name="date" required class="box">
+        
         <p>select exam duration time in min <span>*</span></p>
         <input type="number" name="duration" required class="box">
         <p>select exam degree <span>*</span></p>
