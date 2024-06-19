@@ -126,9 +126,25 @@ if(isset($_POST['submit'])){
       <h3>update profile</h3>
       <div class="flex">
          <div class="col">
-            <p>your name </p>
+            <p>Name </p>
             <input type="text" name="name" placeholder="<?= $fetch_profile['name']; ?>" maxlength="50"  class="box">
-            <p>your profession </p>
+            <p>ID </p>
+            <input type="email" name="email" placeholder="enter your ID" maxlength="20" required class="box">
+            <p>Email </p>
+            <input type="email" name="email" placeholder="<?= $fetch_profile['email']; ?>" maxlength="20"  class="box">
+            <p>Phone Number </p>
+            <input type="tel" name="number" placeholder="enter your Phone Number" maxlength="20" required class="box">
+            <p>update pic :</p>
+            <input type="file" name="image" accept="image/*"  class="box">
+         </div>
+         <div class="col">
+            <p>old password :</p>
+            <input type="password" name="old_pass" placeholder="enter your old password" maxlength="20"  class="box">
+            <p>new password :</p>
+            <input type="password" name="new_pass" placeholder="enter your new password" maxlength="20"  class="box">
+            <p>confirm password :</p>
+            <input type="password" name="cpass" placeholder="confirm your new password" maxlength="20"  class="box">
+            <p>Profession </p>
             <select name="profession" class="box">
                <option value="" selected><?= $fetch_profile['profession']; ?></option>
                <option value="developer">developer</option>
@@ -143,20 +159,14 @@ if(isset($_POST['submit'])){
                <option value="journalist">journalist</option>
                <option value="photographer">photographer</option>
             </select>
-            <p>your email </p>
-            <input type="email" name="email" placeholder="<?= $fetch_profile['email']; ?>" maxlength="20"  class="box">
-         </div>
-         <div class="col">
-            <p>old password :</p>
-            <input type="password" name="old_pass" placeholder="enter your old password" maxlength="20"  class="box">
-            <p>new password :</p>
-            <input type="password" name="new_pass" placeholder="enter your new password" maxlength="20"  class="box">
-            <p>confirm password :</p>
-            <input type="password" name="cpass" placeholder="confirm your new password" maxlength="20"  class="box">
+            <p>Gender </p>
+            <select name="profession" class="box" required>
+               <option value="" disabled selected>-- select your Gender</option>
+               <option value="Male">Male</option>
+               <option value="Female">Female</option>
+            </select>
          </div>
       </div>
-      <p>update pic :</p>
-      <input type="file" name="image" accept="image/*"  class="box">
       <input type="submit" name="submit" value="update now" class="btn">
    </form>
 

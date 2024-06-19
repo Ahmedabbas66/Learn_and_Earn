@@ -62,7 +62,7 @@ if(isset($_POST['submit'])){
    <meta charset="UTF-8">
    <meta http-equiv="X-UA-Compatible" content="IE=edge">
    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-   <title>home</title>
+   <title>Register Student</title>
 
    <!-- font awesome cdn link  -->
    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.min.css">
@@ -78,23 +78,33 @@ if(isset($_POST['submit'])){
 <section class="form-container">
 
    <form class="register" action="" method="post" enctype="multipart/form-data">
-      <h3>create account</h3>
+      <h3>create new account</h3>
       <div class="flex">
          <div class="col">
-            <p>your name <span>*</span></p>
-            <input type="text" name="name" placeholder="eneter your name" maxlength="50" required class="box">
-            <p>your email <span>*</span></p>
-            <input type="email" name="email" placeholder="enter your email" maxlength="20" required class="box">
+            <p>Name <span>*</span></p>
+            <input type="text" name="name" placeholder="eneter your Name" maxlength="50" required class="box">
+            <p>ID <span>*</span></p>
+            <input type="text" name="id" placeholder="eneter your ID" maxlength="50" required class="box">
+            <p>Email <span>*</span></p>
+            <input type="email" name="email" placeholder="enter your Email" maxlength="20" required class="box">
+            <p>Phone Number <span>*</span></p>
+            <input type="tel" name="number" placeholder="enter your Phone Number" maxlength="20" required class="box">
          </div>
          <div class="col">
-            <p>your password <span>*</span></p>
-            <input type="password" name="pass" placeholder="enter your password" maxlength="20" required class="box">
-            <p>confirm password <span>*</span></p>
-            <input type="password" name="cpass" placeholder="confirm your password" maxlength="20" required class="box">
+            <p>Password <span>*</span></p>
+            <input type="password" name="pass" placeholder="enter your Password" maxlength="20" required class="box">
+            <p>Confirm Password <span>*</span></p>
+            <input type="password" name="cpass" placeholder="confirm your Password" maxlength="20" required class="box">
+            <p>Gender <span>*</span></p>
+            <select name="profession" class="box" required>
+               <option value="" disabled selected>-- select your Gender</option>
+               <option value="Male">Male</option>
+               <option value="Female">Female</option>
+            </select>
+            <p>Select Pic <span>*</span></p>
+            <input type="file" name="image" accept="image/*" required class="box">
          </div>
       </div>
-      <p>select pic <span>*</span></p>
-      <input type="file" name="image" accept="image/*" required class="box">
       <p class="link">already have an account? <a href="login.php">login now</a></p>
       <input type="submit" name="submit" value="register now" class="btn">
    </form>
