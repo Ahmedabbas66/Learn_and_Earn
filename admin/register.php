@@ -84,8 +84,8 @@ if(isset($message)){
          <div class="col">
             <p>Name <span>*</span></p>
             <input type="text" name="name" placeholder="eneter your Name" maxlength="50" required class="box">
-            <p>ID <span>*</span></p>
-            <input type="email" name="email" placeholder="enter your ID" maxlength="20" required class="box">
+            <p>National ID <span>*</span></p>
+            <input type="email" name="email" placeholder="enter your National ID" maxlength="20" required class="box">
             <p>Email <span>*</span></p>
             <input type="email" name="email" placeholder="enter your Email" maxlength="20" required class="box">
             <p>Phone Number <span>*</span></p>
