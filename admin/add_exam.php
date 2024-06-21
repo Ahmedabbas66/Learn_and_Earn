@@ -29,6 +29,8 @@ if (isset($_POST['submit'])) {
     $description = filter_var($description, FILTER_SANITIZE_STRING);
     $subject = $_POST['subject'];
     $subject = filter_var($subject, FILTER_SANITIZE_STRING);
+    $subject_title = $_POST['subject_title'];
+
 
     $thumb = $_FILES['thumb']['name'];
     $thumb = filter_var($thumb, FILTER_SANITIZE_STRING);
@@ -42,8 +44,8 @@ if (isset($_POST['submit'])) {
     if ($thumb_size > 2000000) {
         $message[] = 'image size is too large!';
     } else {
-        $insert_exam = $conn->prepare("INSERT INTO exams (id ,status, title, description, subject, time, date, duration, degree ,tutor_id,subject_id ,thumb) VALUES (?, ?, ?, ?, ?, ?, ?, ? ,? , ?, ?, ?)");
-        $insert_exam->execute([$id, $status, $title, $description, $subject, $time, $date, $duration, $degree, $tutor_id, $subject, $rename_thumb]);
+        $insert_exam = $conn->prepare("INSERT INTO exams (status, title, description, subject, time, date, duration, degree, tutor_id, subject_id, thumb, subject_title) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+        $insert_exam->execute([$status, $title, $description, $subject, $time, $date, $duration, $degree, $tutor_id, $subject, $rename_thumb, $subject_title]);
         move_uploaded_file($thumb_tmp_name, $thumb_folder);
         //    $message[] = 'new course uploaded!';
     }
@@ -172,6 +174,7 @@ if (isset($_POST['submit'])) {
             <p>exam description <span>*</span></p>
             <textarea name="description" class="box" required placeholder="write description" maxlength="1000" cols="30" rows="10"></textarea>
             <p>subject <span>*</span></p>
+        <!-- The select element -->
             <select name="subject" class="box" required>
                 <option value="" disabled selected>-- select subject --</option>
                 <?php
@@ -180,16 +183,31 @@ if (isset($_POST['submit'])) {
                 if ($select_subjects->rowCount() > 0) {
                     while ($fetch_subject = $select_subjects->fetch(PDO::FETCH_ASSOC)) {
                 ?>
-                        <option value="<?= $fetch_subject['id']; ?>"><?= $fetch_subject['title']; ?></option>
-                    <?php
-                    }
-                    ?>
+                        <option value="<?= $fetch_subject['id']; ?>" data-title="<?= $fetch_subject['title']; ?>"><?= $fetch_subject['title']; ?></option>
+                        <input type="hidden" name="subject_title" id="subject_title" value="<?= $fetch_subject['title']; ?>">
+
                 <?php
+                    }
                 } else {
                     echo '<option value="" disabled>no subject created yet!</option>';
                 }
                 ?>
             </select>
+
+            <!-- Hidden input field to store the subject title -->
+
+
+            <script>
+                // JavaScript code to handle the selected option
+                document.querySelector('select[name="subject"]').addEventListener('change', function() {
+                    const selectedOption = this.options[this.selectedIndex];
+                    const subjectTitle = selectedOption.getAttribute('data-title');
+                    
+                    // Set the hidden input field's value
+                    document.getElementById('subject_title').value = subjectTitle;
+                });
+            </script>
+
             <p>select time and date <span>*</span></p>
             <input type="time" name="time" required class="box">
             <input type="date" name="date" required class="box">

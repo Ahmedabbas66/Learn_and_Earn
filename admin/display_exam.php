@@ -185,8 +185,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update'])) {
             <input type="hidden" name="original_description" value="<?= htmlspecialchars($exam['description']) ?>">
 
             <p>Subject: </p>
-            <input value="<?= htmlspecialchars($exam['subject']) ?>" type="text" name="subject" readonly class="box">
-            <input type="hidden" name="original_subject" value="<?= htmlspecialchars($exam['subject']) ?>">
+            <input value="<?= htmlspecialchars($exam['subject_title']) ?>" type="text" name="subject" readonly class="box">
+            <input type="hidden" name="original_subject" value="<?= htmlspecialchars($exam['subject_title']) ?>">
 
             <p>Time and Date: </p>
             <input value="<?= htmlspecialchars($exam['time']) ?>" type="time" name="time" required class="box">
