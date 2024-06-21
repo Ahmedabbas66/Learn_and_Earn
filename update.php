@@ -42,6 +42,33 @@ if(isset($_POST['submit'])){
       }
    }
 
+   $national_id = $_POST['national_id'];
+   $national_id = filter_var($national_id, FILTER_SANITIZE_STRING);
+
+   if(!empty($national_id)){
+      $update_national_id = $conn->prepare("UPDATE `users` SET NationalID = ? WHERE id = ?");
+      $update_national_id->execute([$national_id, $user_id]);
+      $message[] = 'National ID updated successfully!';
+   }
+
+   $phone_number = $_POST['number'];
+   $phone_number = filter_var($phone_number, FILTER_SANITIZE_STRING);
+
+   if(!empty($phone_number)){
+      $update_phone_number = $conn->prepare("UPDATE `users` SET PhoneNumber = ? WHERE id = ?");
+      $update_phone_number->execute([$phone_number, $user_id]);
+      $message[] = 'Phone Number updated successfully!';
+   }
+
+   $gender = $_POST['gender'];
+   $gender = filter_var($gender, FILTER_SANITIZE_STRING);
+
+   if(!empty($gender)){
+      $update_gender = $conn->prepare("UPDATE `users` SET Gender = ? WHERE id = ?");
+      $update_gender->execute([$gender, $user_id]);
+      $message[] = 'Gender updated successfully!';
+   }
+
    $image = $_FILES['image']['name'];
    $image = filter_var($image, FILTER_SANITIZE_STRING);
    $ext = pathinfo($image, PATHINFO_EXTENSION);
@@ -119,12 +146,12 @@ if(isset($_POST['submit'])){
          <div class="col">
             <p>Name</p>
             <input type="text" name="name" placeholder="<?= $fetch_profile['name']; ?>" maxlength="100" class="box">
-            <p>ID </p>
-            <input type="text" name="id" placeholder="eneter your ID" maxlength="50" required class="box">
+            <p>National ID </p>
+            <input type="text" name="national_id" placeholder="<?= $fetch_profile['NationalID']; ?>" maxlength="50" class="box">
             <p>Email</p>
             <input type="email" name="email" placeholder="<?= $fetch_profile['email']; ?>" maxlength="100" class="box">
             <p>Phone Number </p>
-            <input type="tel" name="number" placeholder="enter your Phone Number" maxlength="20" required class="box">
+            <input type="tel" name="number" placeholder="<?= $fetch_profile['PhoneNumber']; ?>" maxlength="20" class="box">
             <p>Update Pic</p>
             <input type="file" name="image" accept="image/*" class="box">
          </div>
@@ -136,11 +163,11 @@ if(isset($_POST['submit'])){
                <p>Confirm Password</p>
                <input type="password" name="cpass" placeholder="confirm your New Password" maxlength="50" class="box">
                <p>Gender </p>
-               <select name="profession" class="box" required>
-                  <option value="" disabled selected>-- select your Gender</option>
-                  <option value="Male">Male</option>
-                  <option value="Female">Female</option>
-               </select>
+            <select name="gender" class="box" required>
+               <option value="" disabled selected>-- select your Gender</option>
+               <option value="Male" <?= ($fetch_profile['Gender'] == 'Male') ? 'selected' : ''; ?>>Male</option>
+               <option value="Female" <?= ($fetch_profile['Gender'] == 'Female') ? 'selected' : ''; ?>>Female</option>
+            </select>
          </div>
       </div>
 

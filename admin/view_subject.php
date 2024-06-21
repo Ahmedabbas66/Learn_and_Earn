@@ -13,46 +13,40 @@ if(isset($_GET['get_id'])){
    $get_id = $_GET['get_id'];
 }else{
    $get_id = '';
-   header('location:playlist.php');
+   header('location:subject.php');
 }
 
-if(isset($_POST['delete_playlist'])){
-   $delete_id = $_POST['playlist_id'];
+if(isset($_POST['delete_subject'])){
+   $delete_id = $_POST['subject_id'];
    $delete_id = filter_var($delete_id, FILTER_SANITIZE_STRING);
-   $delete_playlist_thumb = $conn->prepare("SELECT * FROM `playlist` WHERE id = ? LIMIT 1");
-   $delete_playlist_thumb->execute([$delete_id]);
-   $fetch_thumb = $delete_playlist_thumb->fetch(PDO::FETCH_ASSOC);
+   $delete_subject_thumb = $conn->prepare("SELECT * FROM `subject` WHERE id = ? LIMIT 1");
+   $delete_subject_thumb->execute([$delete_id]);
+   $fetch_thumb = $delete_subject_thumb->fetch(PDO::FETCH_ASSOC);
    unlink('../uploaded_files/'.$fetch_thumb['thumb']);
-   $delete_bookmark = $conn->prepare("DELETE FROM `bookmark` WHERE playlist_id = ?");
+   $delete_bookmark = $conn->prepare("DELETE FROM `bookmark` WHERE subject_id = ?");
    $delete_bookmark->execute([$delete_id]);
-   $delete_playlist = $conn->prepare("DELETE FROM `playlist` WHERE id = ?");
-   $delete_playlist->execute([$delete_id]);
-   header('locatin:playlists.php');
+   $delete_subject = $conn->prepare("DELETE FROM `subject` WHERE id = ?");
+   $delete_subject->execute([$delete_id]);
+   header('locatin:subjects.php');
 }
 
 if(isset($_POST['delete_video'])){
    $delete_id = $_POST['video_id'];
    $delete_id = filter_var($delete_id, FILTER_SANITIZE_STRING);
-   $verify_video = $conn->prepare("SELECT * FROM `content` WHERE id = ? LIMIT 1");
+   $verify_video = $conn->prepare("SELECT * FROM `exams` WHERE id = ? LIMIT 1");
    $verify_video->execute([$delete_id]);
    if($verify_video->rowCount() > 0){
-      $delete_video_thumb = $conn->prepare("SELECT * FROM `content` WHERE id = ? LIMIT 1");
+      $delete_video_thumb = $conn->prepare("SELECT * FROM `exams` WHERE id = ? LIMIT 1");
       $delete_video_thumb->execute([$delete_id]);
       $fetch_thumb = $delete_video_thumb->fetch(PDO::FETCH_ASSOC);
-      unlink('../uploaded_files/'.$fetch_thumb['thumb']);
-      $delete_video = $conn->prepare("SELECT * FROM `content` WHERE id = ? LIMIT 1");
+      $delete_video = $conn->prepare("SELECT * FROM `exams` WHERE id = ? LIMIT 1");
       $delete_video->execute([$delete_id]);
       $fetch_video = $delete_video->fetch(PDO::FETCH_ASSOC);
-      unlink('../uploaded_files/'.$fetch_video['video']);
-      $delete_likes = $conn->prepare("DELETE FROM `likes` WHERE content_id = ?");
-      $delete_likes->execute([$delete_id]);
-      $delete_comments = $conn->prepare("DELETE FROM `comments` WHERE content_id = ?");
-      $delete_comments->execute([$delete_id]);
-      $delete_content = $conn->prepare("DELETE FROM `content` WHERE id = ?");
-      $delete_content->execute([$delete_id]);
-      $message[] = 'video deleted!';
+      $delete_exams = $conn->prepare("DELETE FROM `exams` WHERE id = ?");
+      $delete_exams->execute([$delete_id]);
+      $message[] = 'exam deleted!';
    }else{
-      $message[] = 'video already deleted!';
+      $message[] = 'exam already deleted!';
    }
 
 }
@@ -84,27 +78,27 @@ if(isset($_POST['delete_video'])){
    <h1 class="heading">subject details</h1>
 
    <?php
-      $select_playlist = $conn->prepare("SELECT * FROM `playlist` WHERE id = ? AND tutor_id = ?");
-      $select_playlist->execute([$get_id, $tutor_id]);
-      if($select_playlist->rowCount() > 0){
-         while($fetch_playlist = $select_playlist->fetch(PDO::FETCH_ASSOC)){
-            $playlist_id = $fetch_playlist['id'];
-            $count_videos = $conn->prepare("SELECT * FROM `content` WHERE playlist_id = ?");
-            $count_videos->execute([$playlist_id]);
+      $select_subject = $conn->prepare("SELECT * FROM `subject` WHERE id = ? AND tutor_id = ?");
+      $select_subject->execute([$get_id, $tutor_id]);
+      if($select_subject->rowCount() > 0){
+         while($fetch_subject = $select_subject->fetch(PDO::FETCH_ASSOC)){
+            $subject_id = $fetch_subject['id'];
+            $count_videos = $conn->prepare("SELECT * FROM `exams` WHERE subject_id = ?");
+            $count_videos->execute([$subject_id]);
             $total_videos = $count_videos->rowCount();
    ?>
    <div class="row">
       <div class="thumb">
          <span><?= $total_videos; ?></span>
-         <img src="../uploaded_files/<?= $fetch_playlist['thumb']; ?>" alt="">
+         <img src="../uploaded_files/<?= $fetch_subject['thumb']; ?>" alt="">
       </div>
       <div class="details">
-         <h3 class="title"><?= $fetch_playlist['title']; ?></h3>
-         <div class="date"><i class="fas fa-calendar"></i><span><?= $fetch_playlist['date']; ?></span></div>
-         <div class="description"><?= $fetch_playlist['description']; ?></div>
+         <h3 class="title"><?= $fetch_subject['title']; ?></h3>
+         <div class="date"><i class="fas fa-calendar"></i><span><?= $fetch_subject['date']; ?></span></div>
+         <div class="description"><?= $fetch_subject['description']; ?></div>
          <form action="" method="post" class="flex-btn">
-            <input type="hidden" name="playlist_id" value="<?= $playlist_id; ?>">
-            <a href="update_subject.php?get_id=<?= $playlist_id; ?>" class="option-btn">update subject</a>
+            <input type="hidden" name="subject_id" value="<?= $subject_id; ?>">
+            <a href="update_subject.php?get_id=<?= $subject_id; ?>" class="option-btn">update subject</a>
             <input type="submit" value="delete subject" class="delete-btn" onclick="return confirm('delete this subject?');" name="delete">
          </form>
          <a href="add_exam.php" class="btn">add exam</a>
@@ -126,8 +120,8 @@ if(isset($_POST['delete_video'])){
    <div class="box-container">
 
    <?php
-      $select_videos = $conn->prepare("SELECT * FROM `content` WHERE tutor_id = ? AND playlist_id = ?");
-      $select_videos->execute([$tutor_id, $playlist_id]);
+      $select_videos = $conn->prepare("SELECT * FROM `exams` WHERE tutor_id = ? AND subject_id = ?");
+      $select_videos->execute([$tutor_id, $subject_id]);
       if($select_videos->rowCount() > 0){
          while($fecth_videos = $select_videos->fetch(PDO::FETCH_ASSOC)){ 
             $video_id = $fecth_videos['id'];
@@ -141,10 +135,10 @@ if(isset($_POST['delete_video'])){
          <h3 class="title"><?= $fecth_videos['title']; ?></h3>
          <form action="" method="post" class="flex-btn">
             <input type="hidden" name="video_id" value="<?= $video_id; ?>">
-            <a href="update_content.php?get_id=<?= $video_id; ?>" class="option-btn">update</a>
-            <input type="submit" value="delete" class="delete-btn" onclick="return confirm('delete this video?');" name="delete_video">
+            <a href="display_exam.php?exam_id=<?= $video_id; ?>" class="option-btn">update</a>
+            <input type="submit" value="delete" class="delete-btn" onclick="return confirm('delete this exam?');" name="delete_video">
          </form>
-         <a href="view_content.php?get_id=<?= $video_id; ?>" class="btn">watch video</a>
+         <a href="display_exam.php?exam_id=<?= $video_id; ?>" class="btn">view exam</a>
       </div>
    <?php
          }

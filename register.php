@@ -15,6 +15,12 @@ if(isset($_POST['submit'])){
    $name = filter_var($name, FILTER_SANITIZE_STRING);
    $email = $_POST['email'];
    $email = filter_var($email, FILTER_SANITIZE_STRING);
+   $national_id = $_POST['national_id'];
+   $national_id = filter_var($national_id, FILTER_SANITIZE_STRING);
+   $phone_number = $_POST['number'];
+   $phone_number = filter_var($phone_number, FILTER_SANITIZE_STRING);
+   $gender = $_POST['gender'];
+   $gender = filter_var($gender, FILTER_SANITIZE_STRING);
    $pass = sha1($_POST['pass']);
    $pass = filter_var($pass, FILTER_SANITIZE_STRING);
    $cpass = sha1($_POST['cpass']);
@@ -37,8 +43,8 @@ if(isset($_POST['submit'])){
       if($pass != $cpass){
          $message[] = 'confirm passowrd not matched!';
       }else{
-         $insert_user = $conn->prepare("INSERT INTO `users`(id, name, email, password, image) VALUES(?,?,?,?,?)");
-         $insert_user->execute([$id, $name, $email, $cpass, $rename]);
+         $insert_user = $conn->prepare("INSERT INTO `users`(id, name, email, password, image, NationalID, PhoneNumber, Gender) VALUES(?,?,?,?,?,?,?,?)");
+         $insert_user->execute([$id, $name, $email, $cpass, $rename, $national_id, $phone_number, $gender]);
          move_uploaded_file($image_tmp_name, $image_folder);
          
          $verify_user = $conn->prepare("SELECT * FROM `users` WHERE email = ? AND password = ? LIMIT 1");
@@ -84,7 +90,7 @@ if(isset($_POST['submit'])){
             <p>Name <span>*</span></p>
             <input type="text" name="name" placeholder="eneter your Name" maxlength="50" required class="box">
             <p>National ID <span>*</span></p>
-            <input type="text" name="id" placeholder="eneter your National ID" maxlength="50" required class="box">
+            <input type="text" name="national_id" placeholder="eneter your National ID" maxlength="50" required class="box">
             <p>Email <span>*</span></p>
             <input type="email" name="email" placeholder="enter your Email" maxlength="20" required class="box">
             <p>Phone Number <span>*</span></p>
@@ -96,7 +102,7 @@ if(isset($_POST['submit'])){
             <p>Confirm Password <span>*</span></p>
             <input type="password" name="cpass" placeholder="confirm your Password" maxlength="20" required class="box">
             <p>Gender <span>*</span></p>
-            <select name="profession" class="box" required>
+            <select name="gender" class="box" required>
                <option value="" disabled selected>-- select your Gender</option>
                <option value="Male">Male</option>
                <option value="Female">Female</option>

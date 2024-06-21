@@ -10,27 +10,24 @@ if(isset($_COOKIE['tutor_id'])){
 }
 
 if(isset($_POST['delete'])){
-   $delete_id = $_POST['playlist_id'];
+   $delete_id = $_POST['subject_id'];
    $delete_id = filter_var($delete_id, FILTER_SANITIZE_STRING);
 
-   $verify_playlist = $conn->prepare("SELECT * FROM `playlist` WHERE id = ? AND tutor_id = ? LIMIT 1");
-   $verify_playlist->execute([$delete_id, $tutor_id]);
+   $verify_subject = $conn->prepare("SELECT * FROM `subject` WHERE id = ? AND tutor_id = ? LIMIT 1");
+   $verify_subject->execute([$delete_id, $tutor_id]);
 
-   if($verify_playlist->rowCount() > 0){
+   if($verify_subject->rowCount() > 0){
 
    
 
-   $delete_playlist_thumb = $conn->prepare("SELECT * FROM `playlist` WHERE id = ? LIMIT 1");
-   $delete_playlist_thumb->execute([$delete_id]);
-   $fetch_thumb = $delete_playlist_thumb->fetch(PDO::FETCH_ASSOC);
-   unlink('../uploaded_files/'.$fetch_thumb['thumb']);
-   $delete_bookmark = $conn->prepare("DELETE FROM `bookmark` WHERE playlist_id = ?");
-   $delete_bookmark->execute([$delete_id]);
-   $delete_playlist = $conn->prepare("DELETE FROM `playlist` WHERE id = ?");
-   $delete_playlist->execute([$delete_id]);
-   $message[] = 'playlist deleted!';
+   $delete_subject_thumb = $conn->prepare("SELECT * FROM `subject` WHERE id = ? LIMIT 1");
+   $delete_subject_thumb->execute([$delete_id]);
+   $fetch_thumb = $delete_subject_thumb->fetch(PDO::FETCH_ASSOC);
+   $delete_subject = $conn->prepare("DELETE FROM `subject` WHERE id = ?");
+   $delete_subject->execute([$delete_id]);
+   $message[] = 'subject deleted!';
    }else{
-      $message[] = 'playlist already deleted!';
+      $message[] = 'subject already deleted!';
    }
 }
 
@@ -67,32 +64,32 @@ if(isset($_POST['delete'])){
       </div>
 
       <?php
-         $select_playlist = $conn->prepare("SELECT * FROM `playlist` WHERE tutor_id = ? ORDER BY date DESC");
-         $select_playlist->execute([$tutor_id]);
-         if($select_playlist->rowCount() > 0){
-         while($fetch_playlist = $select_playlist->fetch(PDO::FETCH_ASSOC)){
-            $playlist_id = $fetch_playlist['id'];
-            $count_videos = $conn->prepare("SELECT * FROM `content` WHERE playlist_id = ?");
-            $count_videos->execute([$playlist_id]);
+         $select_subject = $conn->prepare("SELECT * FROM `subject` WHERE tutor_id = ? ORDER BY date DESC");
+         $select_subject->execute([$tutor_id]);
+         if($select_subject->rowCount() > 0){
+         while($fetch_subject = $select_subject->fetch(PDO::FETCH_ASSOC)){
+            $subject_id = $fetch_subject['id'];
+            $count_videos = $conn->prepare("SELECT * FROM `exams` WHERE subject_id = ?");
+            $count_videos->execute([$subject_id]);
             $total_videos = $count_videos->rowCount();
       ?>
       <div class="box">
          <div class="flex">
-            <div><i class="fas fa-circle-dot" style="<?php if($fetch_playlist['status'] == 'active'){echo 'color:limegreen'; }else{echo 'color:red';} ?>"></i><span style="<?php if($fetch_playlist['status'] == 'active'){echo 'color:limegreen'; }else{echo 'color:red';} ?>"><?= $fetch_playlist['status']; ?></span></div>
-            <div><i class="fas fa-calendar"></i><span><?= $fetch_playlist['date']; ?></span></div>
+            <div><i class="fas fa-circle-dot" style="<?php if($fetch_subject['status'] == 'active'){echo 'color:limegreen'; }else{echo 'color:red';} ?>"></i><span style="<?php if($fetch_subject['status'] == 'active'){echo 'color:limegreen'; }else{echo 'color:red';} ?>"><?= $fetch_subject['status']; ?></span></div>
+            <div><i class="fas fa-calendar"></i><span><?= $fetch_subject['date']; ?></span></div>
          </div>
          <div class="thumb">
             <span><?= $total_videos; ?></span>
-            <img src="../uploaded_files/<?= $fetch_playlist['thumb']; ?>" alt="">
+            <img src="../uploaded_files/<?= $fetch_subject['thumb']; ?>" alt="">
          </div>
-         <h3 class="title"><?= $fetch_playlist['title']; ?></h3>
-         <p class="description"><?= $fetch_playlist['description']; ?></p>
+         <h3 class="title"><?= $fetch_subject['title']; ?></h3>
+         <p class="description"><?= $fetch_subject['description']; ?></p>
          <form action="" method="post" class="flex-btn">
-            <input type="hidden" name="playlist_id" value="<?= $playlist_id; ?>">
-            <a href="update_subject.php?get_id=<?= $playlist_id; ?>" class="option-btn">update</a>
+            <input type="hidden" name="subject_id" value="<?= $subject_id; ?>">
+            <a href="update_subject.php?get_id=<?= $subject_id; ?>" class="option-btn">update</a>
             <input type="submit" value="delete" class="delete-btn" onclick="return confirm('delete this subject?');" name="delete">
          </form>
-         <a href="view_subject.php?get_id=<?= $playlist_id; ?>" class="btn">view subject</a>
+         <a href="view_subject.php?get_id=<?= $subject_id; ?>" class="btn">view subject</a>
       </div>
       <?php
          } 
@@ -122,7 +119,7 @@ if(isset($_POST['delete'])){
 <script src="../js/admin_script.js"></script>
 
 <script>
-   document.querySelectorAll('.playlists .box-container .box .description').forEach(content => {
+   document.querySelectorAll('.subjects .box-container .box .description').forEach(content => {
       if(content.innerHTML.length > 100) content.innerHTML = content.innerHTML.slice(0, 100);
    });
 </script>
