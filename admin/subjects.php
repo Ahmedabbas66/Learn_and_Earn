@@ -61,11 +61,11 @@ if (isset($_POST['delete'])) {
       <div class="box-container">
 
          <div class="box" style="text-align: center;">
-            <h3 class="title" style="margin-bottom: .5rem;">Create New subject</h3>
-            <a href="add_subject.php" class="btn">Add subject</a>
-         </div>
+               <h3 class="title" style="margin-bottom: .5rem;">Create New subject</h3>
+               <a href="add_subject.php" class="btn">Add subject</a>
+            </div>
 
-         <?php
+            <?php
          $select_subject = $conn->prepare("SELECT * FROM `subject` WHERE tutor_id = ? ORDER BY date DESC");
          $select_subject->execute([$tutor_id]);
          if ($select_subject->rowCount() > 0) {
@@ -75,42 +75,45 @@ if (isset($_POST['delete'])) {
                $count_videos->execute([$subject_id]);
                $total_videos = $count_videos->rowCount();
          ?>
-               <div class="box">
-                  <div class="flex">
-                     <div><i class="fas fa-circle-dot" style="<?php if ($fetch_subject['status'] == 'active') {
-                                                                  echo 'color:limegreen';
-                                                               } else {
-                                                                  echo 'color:red';
-                                                               } ?>"></i><span style="<?php if ($fetch_subject['status'] == 'active') {
-                                                                                                                                                                                       echo 'color:limegreen';
-                                                                                                                                                                                    } else {
-                                                                                                                                                                                       echo 'color:red';
-                                                                                                                                                                                    } ?>"><?= $fetch_subject['status']; ?></span></div>
-                     <div><i class="fas fa-calendar"></i><span><?= $fetch_subject['date']; ?></span></div>
+            <div class="box">
+               <div class="flex">
+                  <div><i class="fas fa-circle-dot" style="<?php if ($fetch_subject['status'] == 'active') {
+                                 echo 'color:limegreen';
+                              } else {
+                                 echo 'color:red';
+                              } ?>"></i><span
+                           style="<?php if ($fetch_subject['status'] == 'active') {
+                                 echo 'color:limegreen';
+                              } else {
+                                 echo 'color:red';
+                              } ?>"><?= $fetch_subject['status']; ?></span>
                   </div>
-                  <div class="thumb">
-                     <span><?= $total_videos; ?></span>
-                     <img src="../uploaded_files/<?= $fetch_subject['thumb']; ?>" alt="">
-                  </div>
-                  <h3 class="title"><?= $fetch_subject['title']; ?></h3>
-                  <p class="description"><?= $fetch_subject['description']; ?></p>
-                  <form action="" method="post" class="flex-btn">
-                     <input type="hidden" name="subject_id" value="<?= $subject_id; ?>">
-                     <a href="update_subject.php?get_id=<?= $subject_id; ?>" class="option-btn">update</a>
-                     <input type="submit" value="delete" class="delete-btn" onclick="return confirm('delete this subject?');" name="delete">
-                  </form>
-                  <a href="view_subject.php?get_id=<?= $subject_id; ?>" class="btn">view subject</a>
+                  <div><i class="fas fa-calendar"></i><span><?= $fetch_subject['date']; ?></span></div>
                </div>
-         <?php
+               <div class="thumb">
+                  <span><?= $total_videos; ?></span>
+                  <img src="../uploaded_files/<?= $fetch_subject['thumb']; ?>" alt="">
+               </div>
+               <h3 class="title"><?= $fetch_subject['title']; ?></h3>
+               <p class="description"><?= $fetch_subject['description']; ?></p>
+               <form action="" method="post" class="flex-btn">
+                  <input type="hidden" name="subject_id" value="<?= $subject_id; ?>">
+                  <a href="update_subject.php?get_id=<?= $subject_id; ?>" class="option-btn">update</a>
+                  <input type="submit" value="delete" class="delete-btn"
+                        onclick="return confirm('delete this subject?');" name="delete">
+               </form>
+               <a href="view_subject.php?get_id=<?= $subject_id; ?>" class="btn">view subject</a>
+            </div>
+            <?php
             }
          } else {
             echo '<p class="empty">no subject added yet!</p>';
          }
          ?>
 
-      </div>
+         </div>
 
-   </section>
+      </section>
 
 
 
@@ -129,9 +132,9 @@ if (isset($_POST['delete'])) {
    <script src="../js/admin_script.js"></script>
 
    <script>
-      document.querySelectorAll('.subjects .box-container .box .description').forEach(content => {
-         if (content.innerHTML.length > 100) content.innerHTML = content.innerHTML.slice(0, 100);
-      });
+   document.querySelectorAll('.subjects .box-container .box .description').forEach(content => {
+      if (content.innerHTML.length > 100) content.innerHTML = content.innerHTML.slice(0, 100);
+   });
    </script>
 
 </body>

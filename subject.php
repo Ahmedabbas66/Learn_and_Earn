@@ -22,17 +22,17 @@ if (isset($_POST['save_list'])) {
         $list_id = $_POST['list_id'];
         $list_id = filter_var($list_id, FILTER_SANITIZE_STRING);
 
-        $select_list = $conn->prepare("SELECT * FROM `bookmark` WHERE user_id = ? AND playlist_id = ?");
+        $select_list = $conn->prepare("SELECT * FROM `bookmark` WHERE user_id = ? AND subject_id = ?");
         $select_list->execute([$user_id, $list_id]);
 
         if ($select_list->rowCount() > 0) {
-            $remove_bookmark = $conn->prepare("DELETE FROM `bookmark` WHERE user_id = ? AND playlist_id = ?");
+            $remove_bookmark = $conn->prepare("DELETE FROM `bookmark` WHERE user_id = ? AND subject_id = ?");
             $remove_bookmark->execute([$user_id, $list_id]);
-            $message[] = 'playlist removed!';
+            $message[] = 'subject removed!';
         } else {
-            $insert_bookmark = $conn->prepare("INSERT INTO `bookmark`(user_id, playlist_id) VALUES(?,?)");
+            $insert_bookmark = $conn->prepare("INSERT INTO `bookmark`(user_id, subject_id) VALUES(?,?)");
             $insert_bookmark->execute([$user_id, $list_id]);
-            $message[] = 'playlist saved!';
+            $message[] = 'subject saved!';
         }
     } else {
         $message[] = 'please login first!';
@@ -62,7 +62,7 @@ if (isset($_POST['save_list'])) {
 
     <?php include 'components/user_header.php'; ?>
 
-    <!-- playlist section starts  -->
+    <!-- subject section starts  -->
 
     <section class="playlist">
 
@@ -71,44 +71,31 @@ if (isset($_POST['save_list'])) {
         <div class="row">
 
             <?php
-            $select_playlist = $conn->prepare("SELECT * FROM `playlist` WHERE id = ? and status = ? LIMIT 1");
-            $select_playlist->execute([$get_id, 'active']);
-            if ($select_playlist->rowCount() > 0) {
-                $fetch_playlist = $select_playlist->fetch(PDO::FETCH_ASSOC);
+            $select_subject = $conn->prepare("SELECT * FROM `subject` WHERE id = ? and status = ? LIMIT 1");
+            $select_subject->execute([$get_id, 'active']);
+            if ($select_subject->rowCount() > 0) {
+                $fetch_subject = $select_subject->fetch(PDO::FETCH_ASSOC);
 
-                $playlist_id = $fetch_playlist['id'];
+                $subject_id = $fetch_subject['id'];
 
-                $count_videos = $conn->prepare("SELECT * FROM `content` WHERE playlist_id = ?");
-                $count_videos->execute([$playlist_id]);
+                $count_videos = $conn->prepare("SELECT * FROM `exams` WHERE subject_id = ?");
+                $count_videos->execute([$subject_id]);
                 $total_videos = $count_videos->rowCount();
 
                 $select_tutor = $conn->prepare("SELECT * FROM `tutors` WHERE id = ? LIMIT 1");
-                $select_tutor->execute([$fetch_playlist['tutor_id']]);
+                $select_tutor->execute([$fetch_subject['tutor_id']]);
                 $fetch_tutor = $select_tutor->fetch(PDO::FETCH_ASSOC);
 
-                $select_bookmark = $conn->prepare("SELECT * FROM `bookmark` WHERE user_id = ? AND playlist_id = ?");
-                $select_bookmark->execute([$user_id, $playlist_id]);
 
             ?>
 
                 <div class="col">
                     <form action="" method="post" class="save-list">
-                        <input type="hidden" name="list_id" value="<?= $playlist_id; ?>">
-                        <?php
-                        if ($select_bookmark->rowCount() > 0) {
-                        ?>
-                            <button type="submit" name="save_list"><i class="fas fa-bookmark"></i><span>saved</span></button>
-                        <?php
-                        } else {
-                        ?>
-                            <button type="submit" name="save_list"><i class="far fa-bookmark"></i><span>save subject</span></button>
-                        <?php
-                        }
-                        ?>
+                        <input type="hidden" name="list_id" value="<?= $subject_id; ?>">
                     </form>
                     <div class="thumb">
                         <span><?= $total_videos; ?> exam</span>
-                        <img src="uploaded_files/<?= $fetch_playlist['thumb']; ?>" alt="">
+                        <img src="uploaded_files/<?= $fetch_subject['thumb']; ?>" alt="">
                     </div>
                 </div>
 
@@ -121,9 +108,9 @@ if (isset($_POST['save_list'])) {
                         </div>
                     </div>
                     <div class="details">
-                        <h3><?= $fetch_playlist['title']; ?></h3>
-                        <p><?= $fetch_playlist['description']; ?></p>
-                        <div class="date"><i class="fas fa-calendar"></i><span><?= $fetch_playlist['date']; ?></span></div>
+                        <h3><?= $fetch_subject['title']; ?></h3>
+                        <p><?= $fetch_subject['description']; ?></p>
+                        <div class="date"><i class="fas fa-calendar"></i><span><?= $fetch_subject['date']; ?></span></div>
                     </div>
                 </div>
 
@@ -137,7 +124,7 @@ if (isset($_POST['save_list'])) {
 
     </section>
 
-    <!-- playlist section ends -->
+    <!-- subject section ends -->
 
     <!-- videos container section starts  -->
 
@@ -148,15 +135,15 @@ if (isset($_POST['save_list'])) {
         <div class="box-container">
 
             <?php
-            $select_content = $conn->prepare("SELECT * FROM `content` WHERE playlist_id = ? AND status = ? ORDER BY date DESC");
-            $select_content->execute([$get_id, 'active']);
-            if ($select_content->rowCount() > 0) {
-                while ($fetch_content = $select_content->fetch(PDO::FETCH_ASSOC)) {
+            $select_exams = $conn->prepare("SELECT * FROM `exams` WHERE subject_id = ? AND status = ? ORDER BY date DESC");
+            $select_exams->execute([$get_id, 'active']);
+            if ($select_exams->rowCount() > 0) {
+                while ($fetch_exams = $select_exams->fetch(PDO::FETCH_ASSOC)) {
             ?>
-                    <a href="watch_video.php?get_id=<?= $fetch_content['id']; ?>" class="box">
+                    <a href="watch_video.php?get_id=<?= $fetch_exams['id']; ?>" class="box">
                         <i class="fas fa-play"></i>
-                        <img src="uploaded_files/<?= $fetch_content['thumb']; ?>" alt="">
-                        <h3><?= $fetch_content['title']; ?></h3>
+                        <img src="uploaded_files/<?= $fetch_exams['thumb']; ?>" alt="">
+                        <h3><?= $fetch_exams['title']; ?></h3>
                     </a>
             <?php
                 }
