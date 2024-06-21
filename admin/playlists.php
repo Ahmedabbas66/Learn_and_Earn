@@ -92,7 +92,7 @@ if (isset($_POST['delete'])) {
                      <div><i class="fas fa-calendar"></i><span><?= $fetch_playlist['date']; ?></span></div>
                   </div>
                   <div class="thumb">
-                     <span><?= $total_videos; ?></span>
+                     <span><?= $total_videos; ?> Videos</span>
                      <img src="../uploaded_files/<?= $fetch_playlist['thumb']; ?>" alt="">
                   </div>
                   <h3 class="title"><?= $fetch_playlist['title']; ?></h3>

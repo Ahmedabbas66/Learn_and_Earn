@@ -93,7 +93,7 @@ if (isset($_POST['submit'])) {
                <p>National ID <span>*</span></p>
                <input type="text" name="national_id" placeholder="enter your National ID" maxlength="20" required class="box">
                <p>Email <span>*</span></p>
-               <input type="email" name="email" placeholder="enter your Email" maxlength="20" required class="box">
+               <input type="email" name="email" placeholder="enter your Email" maxlength="50" required class="box">
                <p>Phone Number <span>*</span></p>
                <input type="tel" name="number" placeholder="enter your Phone Number" maxlength="20" required class="box">
             </div>

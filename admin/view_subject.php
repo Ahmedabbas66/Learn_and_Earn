@@ -90,7 +90,7 @@ if (isset($_POST['delete_video'])) {
       ?>
             <div class="row">
                <div class="thumb">
-                  <span><?= $total_videos; ?></span>
+                  <span><?= $total_videos; ?> Exam</span>
                   <img src="../uploaded_files/<?= $fetch_subject['thumb']; ?>" alt="">
                </div>
                <div class="details">

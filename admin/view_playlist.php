@@ -96,7 +96,7 @@ if (isset($_POST['delete_video'])) {
       ?>
             <div class="row">
                <div class="thumb">
-                  <span><?= $total_videos; ?></span>
+                  <span><?= $total_videos; ?> Videos</span>
                   <img src="../uploaded_files/<?= $fetch_playlist['thumb']; ?>" alt="">
                </div>
                <div class="details">

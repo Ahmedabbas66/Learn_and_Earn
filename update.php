@@ -146,13 +146,13 @@ if (isset($_POST['submit'])) {
          <div class="flex">
             <div class="col">
                <p>Name</p>
-               <input type="text" name="name" placeholder="<?= $fetch_profile['name']; ?>" maxlength="100" class="box">
+               <input value="<?= $fetch_profile['name']; ?>" type="text" name="name" placeholder="<?= $fetch_profile['name']; ?>" maxlength="50" class="box">
                <p>National ID </p>
-               <input type="text" name="national_id" placeholder="<?= $fetch_profile['NationalID']; ?>" maxlength="50" class="box">
+               <input value="<?= $fetch_profile['NationalID']; ?>" type="text" name="national_id" placeholder="<?= $fetch_profile['NationalID']; ?>" maxlength="50" class="box">
                <p>Email</p>
-               <input type="email" name="email" placeholder="<?= $fetch_profile['email']; ?>" maxlength="100" class="box">
+               <input value="<?= $fetch_profile['email']; ?>" type="email" name="email" placeholder="<?= $fetch_profile['email']; ?>" maxlength="50" class="box">
                <p>Phone Number </p>
-               <input type="tel" name="number" placeholder="<?= $fetch_profile['PhoneNumber']; ?>" maxlength="20" class="box">
+               <input value="<?= $fetch_profile['PhoneNumber']; ?>" type="tel" name="number" placeholder="<?= $fetch_profile['PhoneNumber']; ?>" maxlength="20" class="box">
                <p>Update Pic</p>
                <input type="file" name="image" accept="image/*" class="box">
             </div>

@@ -141,7 +141,7 @@ if (isset($_POST['save_list'])) {
                 while ($fetch_exams = $select_exams->fetch(PDO::FETCH_ASSOC)) {
             ?>
                     <a href="watch_video.php?get_id=<?= $fetch_exams['id']; ?>" class="box">
-                        <i class="fas fa-play"></i>
+                        <i class="fa-solid fa-eye"></i>
                         <img src="uploaded_files/<?= $fetch_exams['thumb']; ?>" alt="">
                         <h3><?= $fetch_exams['title']; ?></h3>
                     </a>

@@ -125,7 +125,7 @@ $total_bookmarked = $select_bookmark->rowCount();
       <div class="box-container">
 
          <?php
-         $select_courses = $conn->prepare("SELECT * FROM `playlist` WHERE status = ? ORDER BY date DESC LIMIT 6");
+         $select_courses = $conn->prepare("SELECT * FROM `subject` WHERE status = ? ORDER BY date DESC LIMIT 6");
          $select_courses->execute(['active']);
          if ($select_courses->rowCount() > 0) {
             while ($fetch_course = $select_courses->fetch(PDO::FETCH_ASSOC)) {

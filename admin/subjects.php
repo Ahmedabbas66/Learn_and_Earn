@@ -91,7 +91,7 @@ if (isset($_POST['delete'])) {
                   <div><i class="fas fa-calendar"></i><span><?= $fetch_subject['date']; ?></span></div>
                </div>
                <div class="thumb">
-                  <span><?= $total_videos; ?></span>
+                  <span><?= $total_videos; ?> Exam</span>
                   <img src="../uploaded_files/<?= $fetch_subject['thumb']; ?>" alt="">
                </div>
                <h3 class="title"><?= $fetch_subject['title']; ?></h3>
