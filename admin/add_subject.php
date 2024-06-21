@@ -2,14 +2,14 @@
 
 include '../components/connect.php';
 
-if(isset($_COOKIE['tutor_id'])){
+if (isset($_COOKIE['tutor_id'])) {
    $tutor_id = $_COOKIE['tutor_id'];
-}else{
+} else {
    $tutor_id = '';
    header('location:login.php');
 }
 
-if(isset($_POST['submit'])){
+if (isset($_POST['submit'])) {
 
    $id = unique_id();
    $title = $_POST['title'];
@@ -22,24 +22,24 @@ if(isset($_POST['submit'])){
    $image = $_FILES['image']['name'];
    $image = filter_var($image, FILTER_SANITIZE_STRING);
    $ext = pathinfo($image, PATHINFO_EXTENSION);
-   $rename = unique_id().'.'.$ext;
+   $rename = unique_id() . '.' . $ext;
    $image_size = $_FILES['image']['size'];
    $image_tmp_name = $_FILES['image']['tmp_name'];
-   $image_folder = '../uploaded_files/'.$rename;
+   $image_folder = '../uploaded_files/' . $rename;
 
    $add_subject = $conn->prepare("INSERT INTO `subject`(id, tutor_id, title, description, thumb, status) VALUES(?,?,?,?,?,?)");
    $add_subject->execute([$id, $tutor_id, $title, $description, $rename, $status]);
 
    move_uploaded_file($image_tmp_name, $image_folder);
 
-   $message[] = 'new subject created!';  
-
+   $message[] = 'new subject created!';
 }
 
 ?>
 
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
    <meta charset="UTF-8">
    <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -53,33 +53,32 @@ if(isset($_POST['submit'])){
    <link rel="stylesheet" href="../css/admin_style.css">
 
 </head>
+
 <body>
 
-<?php include '../components/admin_header.php'; ?>
-   
-<section class="playlist-form">
+   <?php include '../components/admin_header.php'; ?>
 
-   <h1 class="heading">create subject</h1>
+   <section class="playlist-form">
 
-   <form action="" method="post" enctype="multipart/form-data">
-      <p>subject status <span>*</span></p>
-      <select name="status" class="box" required>
-         <option value="" selected disabled>-- select status</option>
-         <option value="active">active</option>
-         <option value="deactive">deactive</option>
-      </select>
-      <p>subject title <span>*</span></p>
-      <input type="text" name="title" maxlength="100" required placeholder="enter subject title" class="box">
-      <p>subject description <span>*</span></p>
-      <textarea name="description" class="box" required placeholder="write description" maxlength="1000" cols="30" rows="10"></textarea>
-      <p>subject thumbnail <span>*</span></p>
-      <input type="file" name="image" accept="image/*" required class="box">
-      <input type="submit" value="create subject" name="submit" class="btn">
-   </form>
+      <h1 class="heading">create subject</h1>
 
-</section>
+      <form action="" method="post" enctype="multipart/form-data">
+         <p>subject status <span>*</span></p>
+         <select name="status" class="box" required>
+            <option value="" selected disabled>-- select status</option>
+            <option value="active">active</option>
+            <option value="deactive">deactive</option>
+         </select>
+         <p>subject title <span>*</span></p>
+         <input type="text" name="title" maxlength="100" required placeholder="enter subject title" class="box">
+         <p>subject description <span>*</span></p>
+         <textarea name="description" class="box" required placeholder="write description" maxlength="1000" cols="30" rows="10"></textarea>
+         <p>subject thumbnail <span>*</span></p>
+         <input type="file" name="image" accept="image/*" required class="box">
+         <input type="submit" value="create subject" name="submit" class="btn">
+      </form>
 
-
+   </section>
 
 
 
@@ -93,9 +92,12 @@ if(isset($_POST['submit'])){
 
 
 
-<?php include '../components/footer.php'; ?>
 
-<script src="../js/admin_script.js"></script>
+
+   <?php include '../components/footer.php'; ?>
+
+   <script src="../js/admin_script.js"></script>
 
 </body>
+
 </html>

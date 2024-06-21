@@ -3,10 +3,10 @@
 include '../components/connect.php';
 
 if (isset($_COOKIE['tutor_id'])) {
-$tutor_id = $_COOKIE['tutor_id'];
+    $tutor_id = $_COOKIE['tutor_id'];
 } else {
-$tutor_id = '';
-header('location:login.php');
+    $tutor_id = '';
+    header('location:login.php');
 }
 
 
@@ -29,27 +29,27 @@ if (isset($_POST['submit'])) {
     $description = filter_var($description, FILTER_SANITIZE_STRING);
     $subject = $_POST['subject'];
     $subject = filter_var($subject, FILTER_SANITIZE_STRING);
- 
+
     $thumb = $_FILES['thumb']['name'];
     $thumb = filter_var($thumb, FILTER_SANITIZE_STRING);
     $thumb_ext = pathinfo($thumb, PATHINFO_EXTENSION);
-    $rename_thumb = unique_id().'.'.$thumb_ext;
+    $rename_thumb = unique_id() . '.' . $thumb_ext;
     $thumb_size = $_FILES['thumb']['size'];
     $thumb_tmp_name = $_FILES['thumb']['tmp_name'];
-    $thumb_folder = '../uploaded_files/'.$rename_thumb;
- 
- 
-    if($thumb_size > 2000000){
-       $message[] = 'image size is too large!';
-    }else{
-       $insert_exam = $conn->prepare("INSERT INTO exams (id ,status, title, description, subject, time, date, duration, degree ,tutor_id,subject_id ,thumb) VALUES (?, ?, ?, ?, ?, ?, ?, ? ,? , ?, ?, ?)");
-       $insert_exam->execute([$id,$status, $title, $description, $subject, $time, $date, $duration, $degree,$tutor_id, $subject, $rename_thumb]);
-       move_uploaded_file($thumb_tmp_name, $thumb_folder);
-    //    $message[] = 'new course uploaded!';
-    }
- 
+    $thumb_folder = '../uploaded_files/' . $rename_thumb;
 
-     $exam_id = $conn->lastInsertId();
+
+    if ($thumb_size > 2000000) {
+        $message[] = 'image size is too large!';
+    } else {
+        $insert_exam = $conn->prepare("INSERT INTO exams (id ,status, title, description, subject, time, date, duration, degree ,tutor_id,subject_id ,thumb) VALUES (?, ?, ?, ?, ?, ?, ?, ? ,? , ?, ?, ?)");
+        $insert_exam->execute([$id, $status, $title, $description, $subject, $time, $date, $duration, $degree, $tutor_id, $subject, $rename_thumb]);
+        move_uploaded_file($thumb_tmp_name, $thumb_folder);
+        //    $message[] = 'new course uploaded!';
+    }
+
+
+    $exam_id = $conn->lastInsertId();
 
     if (isset($_POST['questions']) && is_array($_POST['questions'])) {
         foreach ($_POST['questions'] as $question) {
@@ -92,62 +92,62 @@ if (isset($_POST['submit'])) {
     <link rel="stylesheet" href="../css/admin_style.css">
 
     <style>
-    .options {
-        margin-top: 10px;
-    }
+        .options {
+            margin-top: 10px;
+        }
 
-    .option {
-        display: flex;
-        align-items: center;
-        margin-bottom: 5px;
-    }
+        .option {
+            display: flex;
+            align-items: center;
+            margin-bottom: 5px;
+        }
 
-    .option input[type="text"] {
-        margin-left: 10px;
-        flex: 1;
-    }
+        .option input[type="text"] {
+            margin-left: 10px;
+            flex: 1;
+        }
 
-    /* Style the radio buttons */
-    input[type="radio"] {
-        width: 15px;
-        /* Set the width */
-        height: 15px;
-        /* Set the height */
-        margin-right: 10px;
-        /* Space between radio button and label text */
-        appearance: none;
-        /* Remove default styling */
-        border: 1px solid #007bff;
-        /* Add border */
-        border-radius: 50%;
-        /* Make it round */
-        outline: none;
-        /* Remove outline */
-        cursor: pointer;
-        /* Change cursor to pointer */
-        position: relative;
-        /* For positioning the inner circle */
-    }
+        /* Style the radio buttons */
+        input[type="radio"] {
+            width: 15px;
+            /* Set the width */
+            height: 15px;
+            /* Set the height */
+            margin-right: 10px;
+            /* Space between radio button and label text */
+            appearance: none;
+            /* Remove default styling */
+            border: 1px solid #007bff;
+            /* Add border */
+            border-radius: 50%;
+            /* Make it round */
+            outline: none;
+            /* Remove outline */
+            cursor: pointer;
+            /* Change cursor to pointer */
+            position: relative;
+            /* For positioning the inner circle */
+        }
 
-    input[type="radio"]:checked::before {
-        content: '';
-        width: 10px;
-        /* Inner circle width */
-        height: 10px;
-        /* Inner circle height */
-        background-color: #007bff;
-        /* Inner circle color */
-        border-radius: 50%;
-        /* Make the inner circle round */
-        position: absolute;
-        /* Position it absolutely inside the radio button */
-        top: 50%;
-        /* Center it vertically */
-        left: 50%;
-        /* Center it horizontally */
-        transform: translate(-50%, -50%);
-        /* Center it using transform */
-    }
+        input[type="radio"]:checked::before {
+            content: '';
+            width: 10px;
+            /* Inner circle width */
+            height: 10px;
+            /* Inner circle height */
+            background-color: #007bff;
+            /* Inner circle color */
+            border-radius: 50%;
+            /* Make the inner circle round */
+            position: absolute;
+            /* Position it absolutely inside the radio button */
+            top: 50%;
+            /* Center it vertically */
+            left: 50%;
+            /* Center it horizontally */
+            transform: translate(-50%, -50%);
+            /* Center it using transform */
+        }
     </style>
 
 </head>
@@ -170,26 +170,25 @@ if (isset($_POST['submit'])) {
             <p>exam title <span>*</span></p>
             <input type="text" name="title" maxlength="100" required placeholder="enter exam title" class="box">
             <p>exam description <span>*</span></p>
-            <textarea name="description" class="box" required placeholder="write description" maxlength="1000" cols="30"
-                rows="10"></textarea>
+            <textarea name="description" class="box" required placeholder="write description" maxlength="1000" cols="30" rows="10"></textarea>
             <p>subject <span>*</span></p>
             <select name="subject" class="box" required>
                 <option value="" disabled selected>-- select subject --</option>
                 <?php
-            $select_subjects = $conn->prepare("SELECT * FROM `subject` WHERE tutor_id = ?");
-            $select_subjects->execute([$tutor_id]);
-            if ($select_subjects->rowCount() > 0) {
-                while ($fetch_subject = $select_subjects->fetch(PDO::FETCH_ASSOC)) {
-            ?>
-                <option value="<?= $fetch_subject['id']; ?>"><?= $fetch_subject['title']; ?></option>
+                $select_subjects = $conn->prepare("SELECT * FROM `subject` WHERE tutor_id = ?");
+                $select_subjects->execute([$tutor_id]);
+                if ($select_subjects->rowCount() > 0) {
+                    while ($fetch_subject = $select_subjects->fetch(PDO::FETCH_ASSOC)) {
+                ?>
+                        <option value="<?= $fetch_subject['id']; ?>"><?= $fetch_subject['title']; ?></option>
+                    <?php
+                    }
+                    ?>
                 <?php
+                } else {
+                    echo '<option value="" disabled>no subject created yet!</option>';
                 }
                 ?>
-                <?php
-            } else {
-                echo '<option value="" disabled>no subject created yet!</option>';
-            }
-            ?>
             </select>
             <p>select time and date <span>*</span></p>
             <input type="time" name="time" required class="box">
@@ -226,23 +225,23 @@ if (isset($_POST['submit'])) {
     <?php include '../components/footer.php'; ?>
 
     <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        const createButton = document.getElementById('createButton');
-        const componentContainer = document.getElementById('componentContainer');
-        let questionCounter = 1;
+        document.addEventListener('DOMContentLoaded', function() {
+            const createButton = document.getElementById('createButton');
+            const componentContainer = document.getElementById('componentContainer');
+            let questionCounter = 1;
 
-        createButton.addEventListener('click', function() {
-            createQuestionComponent(questionCounter);
-            questionCounter++;
-        });
+            createButton.addEventListener('click', function() {
+                createQuestionComponent(questionCounter);
+                questionCounter++;
+            });
 
-        function createQuestionComponent(number) {
-            // Create a new div element
-            const newComponent = document.createElement('div');
-            newComponent.className = 'component';
+            function createQuestionComponent(number) {
+                // Create a new div element
+                const newComponent = document.createElement('div');
+                newComponent.className = 'component';
 
-            // Set the inner HTML of the new component
-            newComponent.innerHTML = `
+                // Set the inner HTML of the new component
+                newComponent.innerHTML = `
                 <p>Question ${number}</p>
                 <input type="text" name="questions[${number}][text]" placeholder="Enter your question here" required class="box">
                 <div class="options">
@@ -267,31 +266,31 @@ if (isset($_POST['submit'])) {
 
             `;
 
-            // Append the new component to the container
-            componentContainer.appendChild(newComponent);
-        }
+                // Append the new component to the container
+                componentContainer.appendChild(newComponent);
+            }
 
-        window.deleteQuestion = function(button) {
-            const component = button.parentElement;
-            component.remove();
-            updateQuestionNumbers();
-        };
+            window.deleteQuestion = function(button) {
+                const component = button.parentElement;
+                component.remove();
+                updateQuestionNumbers();
+            };
 
-        function updateQuestionNumbers() {
-            const components = document.querySelectorAll('.component');
-            components.forEach((component, index) => {
-                const questionNumber = index + 1;
-                const questionHeader = component.querySelector('p');
-                questionHeader.textContent = `Question ${questionNumber}`;
+            function updateQuestionNumbers() {
+                const components = document.querySelectorAll('.component');
+                components.forEach((component, index) => {
+                    const questionNumber = index + 1;
+                    const questionHeader = component.querySelector('p');
+                    questionHeader.textContent = `Question ${questionNumber}`;
 
-                const radioButtons = component.querySelectorAll('input[type="radio"]');
-                radioButtons.forEach(radio => {
-                    radio.name = `question${questionNumber}`;
+                    const radioButtons = component.querySelectorAll('input[type="radio"]');
+                    radioButtons.forEach(radio => {
+                        radio.name = `question${questionNumber}`;
+                    });
                 });
-            });
-            questionCounter = components.length + 1;
-        }
-    });
+                questionCounter = components.length + 1;
+            }
+        });
     </script>
 
     <script src="../js/admin_script.js"></script>

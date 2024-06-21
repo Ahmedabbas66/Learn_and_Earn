@@ -2,13 +2,13 @@
 
 include 'components/connect.php';
 
-if(isset($_COOKIE['user_id'])){
+if (isset($_COOKIE['user_id'])) {
    $user_id = $_COOKIE['user_id'];
-}else{
+} else {
    $user_id = '';
 }
 
-if(isset($_POST['submit'])){
+if (isset($_POST['submit'])) {
 
    $id = unique_id();
    $name = $_POST['name'];
@@ -29,41 +29,41 @@ if(isset($_POST['submit'])){
    $image = $_FILES['image']['name'];
    $image = filter_var($image, FILTER_SANITIZE_STRING);
    $ext = pathinfo($image, PATHINFO_EXTENSION);
-   $rename = unique_id().'.'.$ext;
+   $rename = unique_id() . '.' . $ext;
    $image_size = $_FILES['image']['size'];
    $image_tmp_name = $_FILES['image']['tmp_name'];
-   $image_folder = 'uploaded_files/'.$rename;
+   $image_folder = 'uploaded_files/' . $rename;
 
    $select_user = $conn->prepare("SELECT * FROM `users` WHERE email = ?");
    $select_user->execute([$email]);
-   
-   if($select_user->rowCount() > 0){
+
+   if ($select_user->rowCount() > 0) {
       $message[] = 'email already taken!';
-   }else{
-      if($pass != $cpass){
+   } else {
+      if ($pass != $cpass) {
          $message[] = 'confirm passowrd not matched!';
-      }else{
+      } else {
          $insert_user = $conn->prepare("INSERT INTO `users`(id, name, email, password, image, NationalID, PhoneNumber, Gender) VALUES(?,?,?,?,?,?,?,?)");
          $insert_user->execute([$id, $name, $email, $cpass, $rename, $national_id, $phone_number, $gender]);
          move_uploaded_file($image_tmp_name, $image_folder);
-         
+
          $verify_user = $conn->prepare("SELECT * FROM `users` WHERE email = ? AND password = ? LIMIT 1");
          $verify_user->execute([$email, $pass]);
          $row = $verify_user->fetch(PDO::FETCH_ASSOC);
-         
-         if($verify_user->rowCount() > 0){
-            setcookie('user_id', $row['id'], time() + 60*60*24*30, '/');
+
+         if ($verify_user->rowCount() > 0) {
+            setcookie('user_id', $row['id'], time() + 60 * 60 * 24 * 30, '/');
             header('location:home.php');
          }
       }
    }
-
 }
 
 ?>
 
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
    <meta charset="UTF-8">
    <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -77,45 +77,46 @@ if(isset($_POST['submit'])){
    <link rel="stylesheet" href="css/style.css">
 
 </head>
+
 <body>
 
-<?php include 'components/start_header.php'; ?>
+   <?php include 'components/start_header.php'; ?>
 
-<section class="form-container">
+   <section class="form-container">
 
-   <form class="register" action="" method="post" enctype="multipart/form-data">
-      <h3>create new account</h3>
-      <div class="flex">
-         <div class="col">
-            <p>Name <span>*</span></p>
-            <input type="text" name="name" placeholder="eneter your Name" maxlength="50" required class="box">
-            <p>National ID <span>*</span></p>
-            <input type="text" name="national_id" placeholder="eneter your National ID" maxlength="50" required class="box">
-            <p>Email <span>*</span></p>
-            <input type="email" name="email" placeholder="enter your Email" maxlength="20" required class="box">
-            <p>Phone Number <span>*</span></p>
-            <input type="tel" name="number" placeholder="enter your Phone Number" maxlength="20" required class="box">
+      <form class="register" action="" method="post" enctype="multipart/form-data">
+         <h3>create new account</h3>
+         <div class="flex">
+            <div class="col">
+               <p>Name <span>*</span></p>
+               <input type="text" name="name" placeholder="eneter your Name" maxlength="50" required class="box">
+               <p>National ID <span>*</span></p>
+               <input type="text" name="national_id" placeholder="eneter your National ID" maxlength="50" required class="box">
+               <p>Email <span>*</span></p>
+               <input type="email" name="email" placeholder="enter your Email" maxlength="20" required class="box">
+               <p>Phone Number <span>*</span></p>
+               <input type="tel" name="number" placeholder="enter your Phone Number" maxlength="20" required class="box">
+            </div>
+            <div class="col">
+               <p>Password <span>*</span></p>
+               <input type="password" name="pass" placeholder="enter your Password" maxlength="20" required class="box">
+               <p>Confirm Password <span>*</span></p>
+               <input type="password" name="cpass" placeholder="confirm your Password" maxlength="20" required class="box">
+               <p>Gender <span>*</span></p>
+               <select name="gender" class="box" required>
+                  <option value="" disabled selected>-- select your Gender</option>
+                  <option value="Male">Male</option>
+                  <option value="Female">Female</option>
+               </select>
+               <p>Select Pic <span>*</span></p>
+               <input type="file" name="image" accept="image/*" required class="box">
+            </div>
          </div>
-         <div class="col">
-            <p>Password <span>*</span></p>
-            <input type="password" name="pass" placeholder="enter your Password" maxlength="20" required class="box">
-            <p>Confirm Password <span>*</span></p>
-            <input type="password" name="cpass" placeholder="confirm your Password" maxlength="20" required class="box">
-            <p>Gender <span>*</span></p>
-            <select name="gender" class="box" required>
-               <option value="" disabled selected>-- select your Gender</option>
-               <option value="Male">Male</option>
-               <option value="Female">Female</option>
-            </select>
-            <p>Select Pic <span>*</span></p>
-            <input type="file" name="image" accept="image/*" required class="box">
-         </div>
-      </div>
-      <p class="link">already have an account? <a href="login.php">login now</a></p>
-      <input type="submit" name="submit" value="register now" class="btn">
-   </form>
+         <p class="link">already have an account? <a href="login.php">login now</a></p>
+         <input type="submit" name="submit" value="register now" class="btn">
+      </form>
 
-</section>
+   </section>
 
 
 
@@ -128,10 +129,11 @@ if(isset($_POST['submit'])){
 
 
 
-<?php include 'components/footer.php'; ?>
+   <?php include 'components/footer.php'; ?>
 
-<!-- custom js file link  -->
-<script src="js/script.js"></script>
-   
+   <!-- custom js file link  -->
+   <script src="js/script.js"></script>
+
 </body>
+
 </html>

@@ -2,14 +2,14 @@
 
 include 'components/connect.php';
 
-if(isset($_COOKIE['user_id'])){
+if (isset($_COOKIE['user_id'])) {
    $user_id = $_COOKIE['user_id'];
-}else{
+} else {
    $user_id = '';
    header('location:login.php');
 }
 
-if(isset($_POST['submit'])){
+if (isset($_POST['submit'])) {
 
    $select_user = $conn->prepare("SELECT * FROM `users` WHERE id = ? LIMIT 1");
    $select_user->execute([$user_id]);
@@ -21,21 +21,21 @@ if(isset($_POST['submit'])){
    $name = $_POST['name'];
    $name = filter_var($name, FILTER_SANITIZE_STRING);
 
-  if(!empty($name)){
-   $update_name = $conn->prepare("UPDATE `users` SET name = ? WHERE id = ?");
-   $update_name->execute([$name, $user_id]);
-   $message[] = 'username updated successfully!';
-  }
+   if (!empty($name)) {
+      $update_name = $conn->prepare("UPDATE `users` SET name = ? WHERE id = ?");
+      $update_name->execute([$name, $user_id]);
+      $message[] = 'username updated successfully!';
+   }
 
    $email = $_POST['email'];
    $email = filter_var($email, FILTER_SANITIZE_STRING);
 
-   if(!empty($email)){
+   if (!empty($email)) {
       $select_email = $conn->prepare("SELECT email FROM `users` WHERE email = ?");
       $select_email->execute([$email]);
-      if($select_email->rowCount() > 0){
+      if ($select_email->rowCount() > 0) {
          $message[] = 'email already taken!';
-      }else{
+      } else {
          $update_email = $conn->prepare("UPDATE `users` SET email = ? WHERE id = ?");
          $update_email->execute([$email, $user_id]);
          $message[] = 'email updated successfully!';
@@ -45,7 +45,7 @@ if(isset($_POST['submit'])){
    $national_id = $_POST['national_id'];
    $national_id = filter_var($national_id, FILTER_SANITIZE_STRING);
 
-   if(!empty($national_id)){
+   if (!empty($national_id)) {
       $update_national_id = $conn->prepare("UPDATE `users` SET NationalID = ? WHERE id = ?");
       $update_national_id->execute([$national_id, $user_id]);
       $message[] = 'National ID updated successfully!';
@@ -54,7 +54,7 @@ if(isset($_POST['submit'])){
    $phone_number = $_POST['number'];
    $phone_number = filter_var($phone_number, FILTER_SANITIZE_STRING);
 
-   if(!empty($phone_number)){
+   if (!empty($phone_number)) {
       $update_phone_number = $conn->prepare("UPDATE `users` SET PhoneNumber = ? WHERE id = ?");
       $update_phone_number->execute([$phone_number, $user_id]);
       $message[] = 'Phone Number updated successfully!';
@@ -63,7 +63,7 @@ if(isset($_POST['submit'])){
    $gender = $_POST['gender'];
    $gender = filter_var($gender, FILTER_SANITIZE_STRING);
 
-   if(!empty($gender)){
+   if (!empty($gender)) {
       $update_gender = $conn->prepare("UPDATE `users` SET Gender = ? WHERE id = ?");
       $update_gender->execute([$gender, $user_id]);
       $message[] = 'Gender updated successfully!';
@@ -72,20 +72,20 @@ if(isset($_POST['submit'])){
    $image = $_FILES['image']['name'];
    $image = filter_var($image, FILTER_SANITIZE_STRING);
    $ext = pathinfo($image, PATHINFO_EXTENSION);
-   $rename = unique_id().'.'.$ext;
+   $rename = unique_id() . '.' . $ext;
    $image_size = $_FILES['image']['size'];
    $image_tmp_name = $_FILES['image']['tmp_name'];
-   $image_folder = 'uploaded_files/'.$rename;
+   $image_folder = 'uploaded_files/' . $rename;
 
-   if(!empty($image)){
-      if($image_size > 2000000){
+   if (!empty($image)) {
+      if ($image_size > 2000000) {
          $message[] = 'image size too large!';
-      }else{
+      } else {
          $update_image = $conn->prepare("UPDATE `users` SET `image` = ? WHERE id = ?");
          $update_image->execute([$rename, $user_id]);
          move_uploaded_file($image_tmp_name, $image_folder);
-         if($prev_image != '' AND $prev_image != $rename){
-            unlink('uploaded_files/'.$prev_image);
+         if ($prev_image != '' and $prev_image != $rename) {
+            unlink('uploaded_files/' . $prev_image);
          }
          $message[] = 'image updated successfully!';
       }
@@ -99,28 +99,28 @@ if(isset($_POST['submit'])){
    $cpass = sha1($_POST['cpass']);
    $cpass = filter_var($cpass, FILTER_SANITIZE_STRING);
 
-   if($old_pass != $empty_pass){
-      if($old_pass != $prev_pass){
+   if ($old_pass != $empty_pass) {
+      if ($old_pass != $prev_pass) {
          $message[] = 'old password not matched!';
-      }elseif($new_pass != $cpass){
+      } elseif ($new_pass != $cpass) {
          $message[] = 'confirm password not matched!';
-      }else{
-         if($new_pass != $empty_pass){
+      } else {
+         if ($new_pass != $empty_pass) {
             $update_pass = $conn->prepare("UPDATE `users` SET password = ? WHERE id = ?");
             $update_pass->execute([$cpass, $user_id]);
             $message[] = 'password updated successfully!';
-         }else{
+         } else {
             $message[] = 'please enter a new password!';
          }
       }
    }
-
 }
 
 ?>
 
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
    <meta charset="UTF-8">
    <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -134,28 +134,29 @@ if(isset($_POST['submit'])){
    <link rel="stylesheet" href="css/style.css">
 
 </head>
+
 <body>
 
-<?php include 'components/user_header.php'; ?>
+   <?php include 'components/user_header.php'; ?>
 
-<section class="form-container" style="min-height: calc(100vh - 19rem);">
+   <section class="form-container" style="min-height: calc(100vh - 19rem);">
 
-   <form action="" method="post" enctype="multipart/form-data">
-      <h3>update profile</h3>
-      <div class="flex">
-         <div class="col">
-            <p>Name</p>
-            <input type="text" name="name" placeholder="<?= $fetch_profile['name']; ?>" maxlength="100" class="box">
-            <p>National ID </p>
-            <input type="text" name="national_id" placeholder="<?= $fetch_profile['NationalID']; ?>" maxlength="50" class="box">
-            <p>Email</p>
-            <input type="email" name="email" placeholder="<?= $fetch_profile['email']; ?>" maxlength="100" class="box">
-            <p>Phone Number </p>
-            <input type="tel" name="number" placeholder="<?= $fetch_profile['PhoneNumber']; ?>" maxlength="20" class="box">
-            <p>Update Pic</p>
-            <input type="file" name="image" accept="image/*" class="box">
-         </div>
-         <div class="col">
+      <form action="" method="post" enctype="multipart/form-data">
+         <h3>update profile</h3>
+         <div class="flex">
+            <div class="col">
+               <p>Name</p>
+               <input type="text" name="name" placeholder="<?= $fetch_profile['name']; ?>" maxlength="100" class="box">
+               <p>National ID </p>
+               <input type="text" name="national_id" placeholder="<?= $fetch_profile['NationalID']; ?>" maxlength="50" class="box">
+               <p>Email</p>
+               <input type="email" name="email" placeholder="<?= $fetch_profile['email']; ?>" maxlength="100" class="box">
+               <p>Phone Number </p>
+               <input type="tel" name="number" placeholder="<?= $fetch_profile['PhoneNumber']; ?>" maxlength="20" class="box">
+               <p>Update Pic</p>
+               <input type="file" name="image" accept="image/*" class="box">
+            </div>
+            <div class="col">
                <p>Old Password</p>
                <input type="password" name="old_pass" placeholder="enter your Old Password" maxlength="50" class="box">
                <p>New Password</p>
@@ -163,21 +164,20 @@ if(isset($_POST['submit'])){
                <p>Confirm Password</p>
                <input type="password" name="cpass" placeholder="confirm your New Password" maxlength="50" class="box">
                <p>Gender </p>
-            <select name="gender" class="box" required>
-               <option value="" disabled selected>-- select your Gender</option>
-               <option value="Male" <?= ($fetch_profile['Gender'] == 'Male') ? 'selected' : ''; ?>>Male</option>
-               <option value="Female" <?= ($fetch_profile['Gender'] == 'Female') ? 'selected' : ''; ?>>Female</option>
-            </select>
+               <select name="gender" class="box" required>
+                  <option value="" disabled selected>-- select your Gender</option>
+                  <option value="Male" <?= ($fetch_profile['Gender'] == 'Male') ? 'selected' : ''; ?>>Male</option>
+                  <option value="Female" <?= ($fetch_profile['Gender'] == 'Female') ? 'selected' : ''; ?>>Female</option>
+               </select>
+            </div>
          </div>
-      </div>
 
-      <input type="submit" name="submit" value="update profile" class="btn">
-   </form>
+         <input type="submit" name="submit" value="update profile" class="btn">
+      </form>
 
-</section>
+   </section>
 
-<!-- update profile section ends -->
-
+   <!-- update profile section ends -->
 
 
 
@@ -190,10 +190,12 @@ if(isset($_POST['submit'])){
 
 
 
-<?php include 'components/footer.php'; ?>
 
-<!-- custom js file link  -->
-<script src="js/script.js"></script>
-   
+   <?php include 'components/footer.php'; ?>
+
+   <!-- custom js file link  -->
+   <script src="js/script.js"></script>
+
 </body>
+
 </html>

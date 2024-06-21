@@ -2,27 +2,27 @@
 
 include '../components/connect.php';
 
-if(isset($_COOKIE['tutor_id'])){
+if (isset($_COOKIE['tutor_id'])) {
    $tutor_id = $_COOKIE['tutor_id'];
-}else{
+} else {
    $tutor_id = '';
    header('location:login.php');
 }
 
-if(isset($_GET['get_id'])){
+if (isset($_GET['get_id'])) {
    $get_id = $_GET['get_id'];
-}else{
+} else {
    $get_id = '';
    header('location:subject.php');
 }
 
-if(isset($_POST['delete_subject'])){
+if (isset($_POST['delete_subject'])) {
    $delete_id = $_POST['subject_id'];
    $delete_id = filter_var($delete_id, FILTER_SANITIZE_STRING);
    $delete_subject_thumb = $conn->prepare("SELECT * FROM `subject` WHERE id = ? LIMIT 1");
    $delete_subject_thumb->execute([$delete_id]);
    $fetch_thumb = $delete_subject_thumb->fetch(PDO::FETCH_ASSOC);
-   unlink('../uploaded_files/'.$fetch_thumb['thumb']);
+   unlink('../uploaded_files/' . $fetch_thumb['thumb']);
    $delete_bookmark = $conn->prepare("DELETE FROM `bookmark` WHERE subject_id = ?");
    $delete_bookmark->execute([$delete_id]);
    $delete_subject = $conn->prepare("DELETE FROM `subject` WHERE id = ?");
@@ -30,12 +30,12 @@ if(isset($_POST['delete_subject'])){
    header('locatin:subjects.php');
 }
 
-if(isset($_POST['delete_video'])){
+if (isset($_POST['delete_video'])) {
    $delete_id = $_POST['video_id'];
    $delete_id = filter_var($delete_id, FILTER_SANITIZE_STRING);
    $verify_video = $conn->prepare("SELECT * FROM `exams` WHERE id = ? LIMIT 1");
    $verify_video->execute([$delete_id]);
-   if($verify_video->rowCount() > 0){
+   if ($verify_video->rowCount() > 0) {
       $delete_video_thumb = $conn->prepare("SELECT * FROM `exams` WHERE id = ? LIMIT 1");
       $delete_video_thumb->execute([$delete_id]);
       $fetch_thumb = $delete_video_thumb->fetch(PDO::FETCH_ASSOC);
@@ -45,10 +45,9 @@ if(isset($_POST['delete_video'])){
       $delete_exams = $conn->prepare("DELETE FROM `exams` WHERE id = ?");
       $delete_exams->execute([$delete_id]);
       $message[] = 'exam deleted!';
-   }else{
+   } else {
       $message[] = 'exam already deleted!';
    }
-
 }
 
 
@@ -56,6 +55,7 @@ if(isset($_POST['delete_video'])){
 
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
    <meta charset="UTF-8">
    <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -69,87 +69,96 @@ if(isset($_POST['delete_video'])){
    <link rel="stylesheet" href="../css/admin_style.css">
 
 </head>
+
 <body>
 
-<?php include '../components/admin_header.php'; ?>
-   
-<section class="playlist-details">
+   <?php include '../components/admin_header.php'; ?>
 
-   <h1 class="heading">subject details</h1>
+   <section class="playlist-details">
 
-   <?php
+      <h1 class="heading">subject details</h1>
+
+      <?php
       $select_subject = $conn->prepare("SELECT * FROM `subject` WHERE id = ? AND tutor_id = ?");
       $select_subject->execute([$get_id, $tutor_id]);
-      if($select_subject->rowCount() > 0){
-         while($fetch_subject = $select_subject->fetch(PDO::FETCH_ASSOC)){
+      if ($select_subject->rowCount() > 0) {
+         while ($fetch_subject = $select_subject->fetch(PDO::FETCH_ASSOC)) {
             $subject_id = $fetch_subject['id'];
             $count_videos = $conn->prepare("SELECT * FROM `exams` WHERE subject_id = ?");
             $count_videos->execute([$subject_id]);
             $total_videos = $count_videos->rowCount();
-   ?>
-   <div class="row">
-      <div class="thumb">
-         <span><?= $total_videos; ?></span>
-         <img src="../uploaded_files/<?= $fetch_subject['thumb']; ?>" alt="">
-      </div>
-      <div class="details">
-         <h3 class="title"><?= $fetch_subject['title']; ?></h3>
-         <div class="date"><i class="fas fa-calendar"></i><span><?= $fetch_subject['date']; ?></span></div>
-         <div class="description"><?= $fetch_subject['description']; ?></div>
-         <form action="" method="post" class="flex-btn">
-            <input type="hidden" name="subject_id" value="<?= $subject_id; ?>">
-            <a href="update_subject.php?get_id=<?= $subject_id; ?>" class="option-btn">update subject</a>
-            <input type="submit" value="delete subject" class="delete-btn" onclick="return confirm('delete this subject?');" name="delete">
-         </form>
-         <a href="add_exam.php" class="btn">add exam</a>
-      </div>
-   </div>
-   <?php
+      ?>
+            <div class="row">
+               <div class="thumb">
+                  <span><?= $total_videos; ?></span>
+                  <img src="../uploaded_files/<?= $fetch_subject['thumb']; ?>" alt="">
+               </div>
+               <div class="details">
+                  <h3 class="title"><?= $fetch_subject['title']; ?></h3>
+                  <div class="date"><i class="fas fa-calendar"></i><span><?= $fetch_subject['date']; ?></span></div>
+                  <div class="description"><?= $fetch_subject['description']; ?></div>
+                  <form action="" method="post" class="flex-btn">
+                     <input type="hidden" name="subject_id" value="<?= $subject_id; ?>">
+                     <a href="update_subject.php?get_id=<?= $subject_id; ?>" class="option-btn">update subject</a>
+                     <input type="submit" value="delete subject" class="delete-btn" onclick="return confirm('delete this subject?');" name="delete">
+                  </form>
+                  <a href="add_exam.php" class="btn">add exam</a>
+               </div>
+            </div>
+      <?php
          }
-      }else{
+      } else {
          echo '<p class="empty">no subject found!</p>';
       }
-   ?>
+      ?>
 
-</section>
+   </section>
 
-<section class="contents">
+   <section class="contents">
 
-   <h1 class="heading">subject exams</h1>
+      <h1 class="heading">subject exams</h1>
 
-   <div class="box-container">
+      <div class="box-container">
 
-   <?php
-      $select_videos = $conn->prepare("SELECT * FROM `exams` WHERE tutor_id = ? AND subject_id = ?");
-      $select_videos->execute([$tutor_id, $subject_id]);
-      if($select_videos->rowCount() > 0){
-         while($fecth_videos = $select_videos->fetch(PDO::FETCH_ASSOC)){ 
-            $video_id = $fecth_videos['id'];
-   ?>
-      <div class="box">
-         <div class="flex">
-            <div><i class="fas fa-dot-circle" style="<?php if($fecth_videos['status'] == 'active'){echo 'color:limegreen'; }else{echo 'color:red';} ?>"></i><span style="<?php if($fecth_videos['status'] == 'active'){echo 'color:limegreen'; }else{echo 'color:red';} ?>"><?= $fecth_videos['status']; ?></span></div>
-            <div><i class="fas fa-calendar"></i><span><?= $fecth_videos['date']; ?></span></div>
-         </div>
-         <img src="../uploaded_files/<?= $fecth_videos['thumb']; ?>" class="thumb" alt="">
-         <h3 class="title"><?= $fecth_videos['title']; ?></h3>
-         <form action="" method="post" class="flex-btn">
-            <input type="hidden" name="video_id" value="<?= $video_id; ?>">
-            <a href="display_exam.php?exam_id=<?= $video_id; ?>" class="option-btn">update</a>
-            <input type="submit" value="delete" class="delete-btn" onclick="return confirm('delete this exam?');" name="delete_video">
-         </form>
-         <a href="display_exam.php?exam_id=<?= $video_id; ?>" class="btn">view exam</a>
-      </div>
-   <?php
+         <?php
+         $select_videos = $conn->prepare("SELECT * FROM `exams` WHERE tutor_id = ? AND subject_id = ?");
+         $select_videos->execute([$tutor_id, $subject_id]);
+         if ($select_videos->rowCount() > 0) {
+            while ($fecth_videos = $select_videos->fetch(PDO::FETCH_ASSOC)) {
+               $video_id = $fecth_videos['id'];
+         ?>
+               <div class="box">
+                  <div class="flex">
+                     <div><i class="fas fa-dot-circle" style="<?php if ($fecth_videos['status'] == 'active') {
+                                                                  echo 'color:limegreen';
+                                                               } else {
+                                                                  echo 'color:red';
+                                                               } ?>"></i><span style="<?php if ($fecth_videos['status'] == 'active') {
+                                                                                                                                                                                       echo 'color:limegreen';
+                                                                                                                                                                                    } else {
+                                                                                                                                                                                       echo 'color:red';
+                                                                                                                                                                                    } ?>"><?= $fecth_videos['status']; ?></span></div>
+                     <div><i class="fas fa-calendar"></i><span><?= $fecth_videos['date']; ?></span></div>
+                  </div>
+                  <img src="../uploaded_files/<?= $fecth_videos['thumb']; ?>" class="thumb" alt="">
+                  <h3 class="title"><?= $fecth_videos['title']; ?></h3>
+                  <form action="" method="post" class="flex-btn">
+                     <input type="hidden" name="video_id" value="<?= $video_id; ?>">
+                     <a href="display_exam.php?exam_id=<?= $video_id; ?>" class="option-btn">update</a>
+                     <input type="submit" value="delete" class="delete-btn" onclick="return confirm('delete this exam?');" name="delete_video">
+                  </form>
+                  <a href="display_exam.php?exam_id=<?= $video_id; ?>" class="btn">view exam</a>
+               </div>
+         <?php
+            }
+         } else {
+            echo '<p class="empty">no exams added yet! <a href="add_exam.php" class="btn" style="margin-top: 1.5rem;">add exam</a></p>';
          }
-      }else{
-         echo '<p class="empty">no exams added yet! <a href="add_exam.php" class="btn" style="margin-top: 1.5rem;">add exam</a></p>';
-      }
-   ?>
+         ?>
 
-   </div>
+      </div>
 
-</section>
+   </section>
 
 
 
@@ -165,9 +174,10 @@ if(isset($_POST['delete_video'])){
 
 
 
-<?php include '../components/footer.php'; ?>
+   <?php include '../components/footer.php'; ?>
 
-<script src="../js/admin_script.js"></script>
+   <script src="../js/admin_script.js"></script>
 
 </body>
+
 </html>

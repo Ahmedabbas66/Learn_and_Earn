@@ -2,9 +2,9 @@
 
 include '../components/connect.php';
 
-if(isset($_COOKIE['tutor_id'])){
+if (isset($_COOKIE['tutor_id'])) {
    $tutor_id = $_COOKIE['tutor_id'];
-}else{
+} else {
    $tutor_id = '';
    header('location:login.php');
 }
@@ -40,6 +40,7 @@ $total_comments = $select_comments->rowCount();
 
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
    <meta charset="UTF-8">
    <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -53,63 +54,64 @@ $total_comments = $select_comments->rowCount();
    <link rel="stylesheet" href="../css/admin_style.css">
 
 </head>
+
 <body>
 
-<?php include '../components/admin_header.php'; ?>
-   
-<section class="dashboard">
+   <?php include '../components/admin_header.php'; ?>
 
-   <h1 class="heading">dashboard</h1>
+   <section class="dashboard">
 
-   <div class="box-container">
+      <h1 class="heading">dashboard</h1>
 
-      <div class="box">
-         <h3>welcome!</h3>
-         <p><?= $fetch_profile['name']; ?></p>
-         <a href="profile.php" class="btn">view profile</a>
-      </div>
+      <div class="box-container">
 
-      <div class="box">
-         <h3><?= $total_subjects; ?></h3>
-         <p>total subject</p>
-         <a href="add_subject.php" class="btn">add new subject</a>
-      </div>
-      
-      <div class="box">
-         <h3><?= $total_exams; ?></h3>
-         <p>total exams</p>
-         <a href="add_exam.php" class="btn">add new exam</a>
-      </div>
-      
-      <div class="box">
-         <h3><?= $total_playlists; ?></h3>
-         <p>total playlists</p>
-         <a href="add_playlist.php" class="btn">add new playlist</a>
-      </div>
+         <div class="box">
+            <h3>welcome!</h3>
+            <p><?= $fetch_profile['name']; ?></p>
+            <a href="profile.php" class="btn">view profile</a>
+         </div>
 
-      <div class="box">
-         <h3><?= $total_contents; ?></h3>
-         <p>total videos</p>
-         <a href="add_content.php" class="btn">add new video</a>
-      </div>
+         <div class="box">
+            <h3><?= $total_subjects; ?></h3>
+            <p>total subject</p>
+            <a href="add_subject.php" class="btn">add new subject</a>
+         </div>
+
+         <div class="box">
+            <h3><?= $total_exams; ?></h3>
+            <p>total exams</p>
+            <a href="add_exam.php" class="btn">add new exam</a>
+         </div>
+
+         <div class="box">
+            <h3><?= $total_playlists; ?></h3>
+            <p>total playlists</p>
+            <a href="add_playlist.php" class="btn">add new playlist</a>
+         </div>
+
+         <div class="box">
+            <h3><?= $total_contents; ?></h3>
+            <p>total videos</p>
+            <a href="add_content.php" class="btn">add new video</a>
+         </div>
 
 
 
-      <!-- <div class="box">
+         <!-- <div class="box">
          <h3><?= $total_likes; ?></h3>
          <p>total likes</p>
          <a href="contents.php" class="btn">view likes</a>
       </div> -->
 
-      <div class="box">
-         <h3><?= $total_comments; ?></h3>
-         <p>total comments</p>
-         <a href="comments.php" class="btn">view comments</a>
+         <div class="box">
+            <h3><?= $total_comments; ?></h3>
+            <p>total comments</p>
+            <a href="comments.php" class="btn">view comments</a>
+         </div>
+
       </div>
 
-   </div>
-
-</section>
+   </section>
 
 
 
@@ -125,9 +127,10 @@ $total_comments = $select_comments->rowCount();
 
 
 
-<?php include '../components/footer.php'; ?>
+   <?php include '../components/footer.php'; ?>
 
-<script src="../js/admin_script.js"></script>
+   <script src="../js/admin_script.js"></script>
 
 </body>
+
 </html>

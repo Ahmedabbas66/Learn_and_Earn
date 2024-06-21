@@ -2,9 +2,9 @@
 
 include 'components/connect.php';
 
-if(isset($_COOKIE['user_id'])){
+if (isset($_COOKIE['user_id'])) {
    $user_id = $_COOKIE['user_id'];
-}else{
+} else {
    $user_id = '';
    header('location:login.php');
 }
@@ -25,6 +25,7 @@ $total_bookmarked = $select_bookmark->rowCount();
 
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
    <meta charset="UTF-8">
    <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -38,65 +39,66 @@ $total_bookmarked = $select_bookmark->rowCount();
    <link rel="stylesheet" href="css/style.css">
 
 </head>
+
 <body>
 
-<?php include 'components/user_header.php'; ?>
+   <?php include 'components/user_header.php'; ?>
 
-<section class="profile">
+   <section class="profile">
 
-   <h1 class="heading">profile details</h1>
+      <h1 class="heading">profile details</h1>
 
-   <div class="details">
+      <div class="details">
 
-      <div class="user">
-         <img src="uploaded_files/<?= $fetch_profile['image']; ?>" alt="">
-         <h3><?= $fetch_profile['name']; ?></h3>
-         <p>student</p>
-         <a href="update.php" class="inline-btn">update profile</a>
+         <div class="user">
+            <img src="uploaded_files/<?= $fetch_profile['image']; ?>" alt="">
+            <h3><?= $fetch_profile['name']; ?></h3>
+            <p>student</p>
+            <a href="update.php" class="inline-btn">update profile</a>
+         </div>
+
+         <div class="box-container">
+
+            <div class="box">
+               <div class="flex">
+                  <i class="fas fa-bookmark"></i>
+                  <div>
+                     <h3><?= $total_bookmarked; ?></h3>
+                     <span>saved playlists</span>
+                  </div>
+               </div>
+               <a href="#" class="inline-btn">view playlists</a>
+            </div>
+
+            <div class="box">
+               <div class="flex">
+                  <i class="fas fa-heart"></i>
+                  <div>
+                     <h3><?= $total_likes; ?></h3>
+                     <span>liked tutorials</span>
+                  </div>
+               </div>
+               <a href="#" class="inline-btn">view liked</a>
+            </div>
+
+            <div class="box">
+               <div class="flex">
+                  <i class="fas fa-comment"></i>
+                  <div>
+                     <h3><?= $total_comments; ?></h3>
+                     <span>video comments</span>
+                  </div>
+               </div>
+               <a href="#" class="inline-btn">view comments</a>
+            </div>
+
+         </div>
+
       </div>
 
-      <div class="box-container">
+   </section>
 
-         <div class="box">
-            <div class="flex">
-               <i class="fas fa-bookmark"></i>
-               <div>
-                  <h3><?= $total_bookmarked; ?></h3>
-                  <span>saved playlists</span>
-               </div>
-            </div>
-            <a href="#" class="inline-btn">view playlists</a>
-         </div>
-
-         <div class="box">
-            <div class="flex">
-               <i class="fas fa-heart"></i>
-               <div>
-                  <h3><?= $total_likes; ?></h3>
-                  <span>liked tutorials</span>
-               </div>
-            </div>
-            <a href="#" class="inline-btn">view liked</a>
-         </div>
-
-         <div class="box">
-            <div class="flex">
-               <i class="fas fa-comment"></i>
-               <div>
-                  <h3><?= $total_comments; ?></h3>
-                  <span>video comments</span>
-               </div>
-            </div>
-            <a href="#" class="inline-btn">view comments</a>
-         </div>
-
-      </div>
-
-   </div>
-
-</section>
-
-<!-- profile section ends -->
+   <!-- profile section ends -->
 
 
 
@@ -109,18 +111,19 @@ $total_bookmarked = $select_bookmark->rowCount();
 
 
 
-<!-- footer section starts  -->
+   <!-- footer section starts  -->
 
-<footer class="footer">
+   <footer class="footer">
 
-   &copy; copyright @ 2022 by <span>mr. web designer</span> | all rights reserved!
+      &copy; copyright @ 2022 by <span>mr. web designer</span> | all rights reserved!
 
-</footer>
+   </footer>
 
-<!-- footer section ends -->
+   <!-- footer section ends -->
 
-<!-- custom js file link  -->
-<script src="js/script.js"></script>
-   
+   <!-- custom js file link  -->
+   <script src="js/script.js"></script>
+
 </body>
+
 </html>

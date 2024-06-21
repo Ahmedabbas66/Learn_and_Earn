@@ -2,7 +2,7 @@
 
 include '../components/connect.php';
 
-if(isset($_POST['submit'])){
+if (isset($_POST['submit'])) {
 
    $email = $_POST['email'];
    $email = filter_var($email, FILTER_SANITIZE_STRING);
@@ -12,20 +12,20 @@ if(isset($_POST['submit'])){
    $select_tutor = $conn->prepare("SELECT * FROM `tutors` WHERE email = ? AND password = ? LIMIT 1");
    $select_tutor->execute([$email, $pass]);
    $row = $select_tutor->fetch(PDO::FETCH_ASSOC);
-   
-   if($select_tutor->rowCount() > 0){
-     setcookie('tutor_id', $row['id'], time() + 60*60*24*30, '/');
-     header('location:dashboard.php');
-   }else{
+
+   if ($select_tutor->rowCount() > 0) {
+      setcookie('tutor_id', $row['id'], time() + 60 * 60 * 24 * 30, '/');
+      header('location:dashboard.php');
+   } else {
       $message[] = 'incorrect email or password!';
    }
-
 }
 
 ?>
 
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
    <meta charset="UTF-8">
    <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -39,39 +39,39 @@ if(isset($_POST['submit'])){
    <link rel="stylesheet" href="../css/admin_style.css">
 
 </head>
+
 <body style="padding-left: 0;">
 
-<?php
-if(isset($message)){
-   foreach($message as $message){
-      echo '
+   <?php
+   if (isset($message)) {
+      foreach ($message as $message) {
+         echo '
       <div class="message form">
-         <span>'.$message.'</span>
+         <span>' . $message . '</span>
          <i class="fas fa-times" onclick="this.parentElement.remove();"></i>
       </div>
       ';
+      }
    }
-}
-?>
+   ?>
 
-<!-- register section starts  -->
+   <!-- register section starts  -->
 
-<section class="form-container">
+   <section class="form-container">
 
-   <form action="" method="post" enctype="multipart/form-data" class="login">
-      <h3>welcome back!</h3>
-      <p>your email <span>*</span></p>
-      <input type="email" name="email" placeholder="enter your email" maxlength="20" required class="box">
-      <p>your password <span>*</span></p>
-      <input type="password" name="pass" placeholder="enter your password" maxlength="20" required class="box">
-      <p class="link">don't have an account? <a href="register.php">register new</a></p>
-      <input type="submit" name="submit" value="login now" class="btn">
-   </form>
+      <form action="" method="post" enctype="multipart/form-data" class="login">
+         <h3>welcome back!</h3>
+         <p>your email <span>*</span></p>
+         <input type="email" name="email" placeholder="enter your email" maxlength="20" required class="box">
+         <p>your password <span>*</span></p>
+         <input type="password" name="pass" placeholder="enter your password" maxlength="20" required class="box">
+         <p class="link">don't have an account? <a href="register.php">register new</a></p>
+         <input type="submit" name="submit" value="login now" class="btn">
+      </form>
 
-</section>
+   </section>
 
-<!-- registe section ends -->
-
+   <!-- registe section ends -->
 
 
 
@@ -85,28 +85,28 @@ if(isset($message)){
 
 
 
-<script>
 
-let darkMode = localStorage.getItem('dark-mode');
-let body = document.body;
+   <script>
+      let darkMode = localStorage.getItem('dark-mode');
+      let body = document.body;
 
-const enabelDarkMode = () =>{
-   body.classList.add('dark');
-   localStorage.setItem('dark-mode', 'enabled');
-}
+      const enabelDarkMode = () => {
+         body.classList.add('dark');
+         localStorage.setItem('dark-mode', 'enabled');
+      }
 
-const disableDarkMode = () =>{
-   body.classList.remove('dark');
-   localStorage.setItem('dark-mode', 'disabled');
-}
+      const disableDarkMode = () => {
+         body.classList.remove('dark');
+         localStorage.setItem('dark-mode', 'disabled');
+      }
 
-if(darkMode === 'enabled'){
-   enabelDarkMode();
-}else{
-   disableDarkMode();
-}
+      if (darkMode === 'enabled') {
+         enabelDarkMode();
+      } else {
+         disableDarkMode();
+      }
+   </script>
 
-</script>
-   
 </body>
+
 </html>
