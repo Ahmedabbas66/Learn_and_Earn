@@ -27,12 +27,12 @@ if(isset($_POST['submit'])){
    $image_tmp_name = $_FILES['image']['tmp_name'];
    $image_folder = '../uploaded_files/'.$rename;
 
-   $add_playlist = $conn->prepare("INSERT INTO `playlist`(id, tutor_id, title, description, thumb, status) VALUES(?,?,?,?,?,?)");
-   $add_playlist->execute([$id, $tutor_id, $title, $description, $rename, $status]);
+   $add_subject = $conn->prepare("INSERT INTO `subject`(id, tutor_id, title, description, thumb, status) VALUES(?,?,?,?,?,?)");
+   $add_subject->execute([$id, $tutor_id, $title, $description, $rename, $status]);
 
    move_uploaded_file($image_tmp_name, $image_folder);
 
-   $message[] = 'new playlist created!';  
+   $message[] = 'new subject created!';  
 
 }
 

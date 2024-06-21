@@ -13,9 +13,20 @@ $select_contents = $conn->prepare("SELECT * FROM `content` WHERE tutor_id = ?");
 $select_contents->execute([$tutor_id]);
 $total_contents = $select_contents->rowCount();
 
+
+$select_exams = $conn->prepare("SELECT * FROM `exams` WHERE tutor_id = ?");
+$select_exams->execute([$tutor_id]);
+$total_exams = $select_exams->rowCount();
+
 $select_playlists = $conn->prepare("SELECT * FROM `playlist` WHERE tutor_id = ?");
 $select_playlists->execute([$tutor_id]);
 $total_playlists = $select_playlists->rowCount();
+
+
+$select_subjects = $conn->prepare("SELECT * FROM `subject` WHERE tutor_id = ?");
+$select_subjects->execute([$tutor_id]);
+$total_subjects = $select_subjects->rowCount();
+
 
 $select_likes = $conn->prepare("SELECT * FROM `likes` WHERE tutor_id = ?");
 $select_likes->execute([$tutor_id]);
@@ -59,13 +70,13 @@ $total_comments = $select_comments->rowCount();
       </div>
 
       <div class="box">
-         <h3><?= $total_playlists; ?></h3>
+         <h3><?= $total_subjects; ?></h3>
          <p>total subject</p>
          <a href="add_subject.php" class="btn">add new subject</a>
       </div>
       
       <div class="box">
-         <h3><?= $total_contents; ?></h3>
+         <h3><?= $total_exams; ?></h3>
          <p>total exams</p>
          <a href="add_exam.php" class="btn">add new exam</a>
       </div>
