@@ -32,7 +32,7 @@ $questions = $select_questions->fetchAll(PDO::FETCH_ASSOC);
 
 <?php
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update'])) {
-    // Compare and update exam fields
+    // Update exam fields
     if ($_POST['title'] !== $_POST['original_title']) {
         $stmt = $conn->prepare("UPDATE exams SET title = ? WHERE id = ?");
         $stmt->execute([$_POST['title'], $exam['id']]);
@@ -58,13 +58,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update'])) {
         $stmt->execute([$_POST['degree'], $exam['id']]);
     }
 
-    // Compare and update questions and options
+    // Update questions
     foreach ($_POST['questions'] as $question_id => $question_text) {
         if ($question_text !== $_POST['original_questions'][$question_id]) {
             $stmt = $conn->prepare("UPDATE questions SET text = ? WHERE id = ?");
             $stmt->execute([$question_text, $question_id]);
         }
     }
+
+    // Update options
     foreach ($_POST['options'] as $question_id => $option_group) {
         foreach ($option_group as $option_id => $option_text) {
             if ($option_text !== $_POST['original_options'][$question_id][$option_id]) {
@@ -73,11 +75,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update'])) {
             }
         }
     }
+
+    // Update correct option
+    foreach ($_POST['correct_option'] as $question_id => $correct_option_id) {
+        // Unset the previous correct option
+        $stmt = $conn->prepare("UPDATE options SET is_correct = 0 WHERE question_id = ?");
+        $stmt->execute([$question_id]);
+
+        // Set the new correct option
+        $stmt = $conn->prepare("UPDATE options SET is_correct = 1 WHERE id = ?");
+        $stmt->execute([$correct_option_id]);
+    }
 }
 ?>
-
-
-
 
 
 <!DOCTYPE html>
@@ -210,7 +220,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update'])) {
                         ?>
                             <div class="option">
                                 <p>
-                                    <input type="radio" name="option_<?= $question['id'] ?>" value="<?= $letter ?>" <?= $option['is_correct'] ? 'checked' : '' ?>> <?= $letter ?>
+                                    <input type="radio" name="correct_option[<?= $question['id'] ?>]" value="<?= $option['id'] ?>" <?= $option['is_correct'] ? 'checked' : '' ?>> <?= $letter ?>
                                 </p>
                                 <input value="<?= htmlspecialchars($option['text']) ?>" type="text" name="options[<?= $question['id'] ?>][<?= $option['id'] ?>]" class="box">
                                 <input type="hidden" name="original_options[<?= $question['id'] ?>][<?= $option['id'] ?>]" value="<?= htmlspecialchars($option['text']) ?>">
@@ -221,8 +231,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update'])) {
             </div>
             <input type="submit" value="update exam" name="update" class="btn">
         </form>
-
-
 
     </section>
 
