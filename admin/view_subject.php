@@ -147,7 +147,7 @@ if (isset($_POST['delete_video'])) {
                      <a href="display_exam.php?exam_id=<?= $video_id; ?>" class="option-btn">update</a>
                      <input type="submit" value="delete" class="delete-btn" onclick="return confirm('delete this exam?');" name="delete_video">
                   </form>
-                  <a href="display_exam.php?exam_id=<?= $video_id; ?>" class="btn">view exam</a>
+                  <a href="view_students.php" class="btn">view students</a>
                </div>
          <?php
             }

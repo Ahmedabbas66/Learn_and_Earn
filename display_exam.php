@@ -200,6 +200,24 @@ $questions = $select_questions->fetchAll(PDO::FETCH_ASSOC);
             }
         });
 
+        // document.addEventListener('keydown', function(event) {
+        //     if (event.metaKey && event.key === 'g') {
+        //         event.preventDefault();
+        //         event.stopPropagation();
+        //         console.log('Win+G combination pressed. Default action prevented.');
+        //     }
+        // });
+
+        // window.addEventListener('load', function() {
+        //     window.addEventListener('keydown', function(event) {
+        //         if (event.metaKey && event.key.toLowerCase() === 'g') {
+        //             event.preventDefault();
+        //             event.stopPropagation();
+        //             console.log('Win+G combination pressed. Default action prevented.');
+        //         }
+        //     });
+        // });
+
         document.addEventListener('contextmenu', function(event) {
             event.preventDefault();
         });
