@@ -193,6 +193,91 @@ $questions = $select_questions->fetchAll(PDO::FETCH_ASSOC);
         };
     </script>
 
+    <script>
+        document.addEventListener('keydown', function(event) {
+            if (event.ctrlKey && event.key === 'r') {
+                event.preventDefault();
+            }
+        });
+
+        document.addEventListener('contextmenu', function(event) {
+            event.preventDefault();
+        });
+
+        window.addEventListener('blur', function() {
+            // Show an alert with only an OK button
+            alert("You have switched away from the exam page. You will now be redirected to the home page.");
+
+            // Redirect to home.php
+            window.location.href = 'home.php';
+        });
+
+        window.addEventListener('beforeunload', function(event) {
+            // Customize the confirmation message
+            var confirmationMessage = "You are about to reload the page. You will now be redirected to the home page.";
+
+            // Show a custom confirmation dialog with only an OK button
+            if (confirm(confirmationMessage)) {
+                // Redirect to home.php
+                window.location.href = 'home.php';
+            }
+
+            // Set the confirmation message in some browsers
+            (event || window.event).returnValue = confirmationMessage; // For IE and Firefox
+            return confirmationMessage; // For other browsers
+        });
+
+        // // Listen for keydown events on the window
+        // window.addEventListener('keydown', function(event) {
+        //     // Check if the key combination is Ctrl+Tab
+        //     if (event.ctrlKey && event.key === 'Tab') {
+        //         // Prevent the default browser behavior
+        //         event.preventDefault();
+        //     }
+        // });
+
+        // // Listen for keydown events on the window
+        // window.addEventListener('keydown', function(event) {
+        //     // Check if the key combination is Ctrl+Tab
+        //     if (event.ctrlKey && event.key === 'Tab') {
+        //         // Prevent the default browser behavior
+        //         event.preventDefault();
+        //         // Display an alert
+        //         alert("You have pressed Ctrl+Tab. Click OK to continue.");
+        //         window.location.href = "home.php";
+        //     }
+        // });
+
+        // Listen for keydown events on the window
+        window.addEventListener('keydown', function(event) {
+            // Check if the key combination is Ctrl+Tab
+            if (event.ctrlKey && event.key === 'Tab') {
+                // Prevent the default browser behavior
+                event.preventDefault();
+                // Redirect to home.php
+                window.location.href = "home.php";
+            }
+        });
+
+        // // Listen for fullscreen change events
+        // document.addEventListener('fullscreenchange', function(event) {
+        //     // Check if the page is not in fullscreen mode
+        //     if (!document.fullscreenElement) {
+        //         // Show a confirmation dialog with only an OK button
+        //         var confirmationMessage = "You are not in fullscreen mode. You will now be redirected to the home page.";
+        //         alert(confirmationMessage);
+
+        //         // Redirect to home.php
+        //         window.location.href = 'home.php';
+        //     }
+        // });
+
+        window.onresize = function() {
+            alert("You have resized the window. Click OK to go to the home page.");
+            window.location.href = "home.php";
+        };
+    </script>
+
 
     <script src="js/admin_script.js"></script>
 
