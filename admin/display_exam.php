@@ -33,6 +33,10 @@ $questions = $select_questions->fetchAll(PDO::FETCH_ASSOC);
 <?php
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update'])) {
     // Update exam fields
+    if ($_POST['status'] !== $_POST['original_status']) {
+        $stmt = $conn->prepare("UPDATE exams SET status = ? WHERE id = ?");
+        $stmt->execute([$_POST['status'], $exam['id']]);
+    }
     if ($_POST['title'] !== $_POST['original_title']) {
         $stmt = $conn->prepare("UPDATE exams SET title = ? WHERE id = ?");
         $stmt->execute([$_POST['title'], $exam['id']]);
@@ -175,6 +179,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update'])) {
         <h1 class="heading">view and update exam " <?= htmlspecialchars($exam['title']) ?> "</h1>
 
         <form action="" method="post" enctype="multipart/form-data">
+
+            <p>update status </p>
+            <select name="status" class="box" required>
+                <option value="<?= $exam['status']; ?>" selected><?= $exam['status']; ?></option>
+                <option value="active">active</option>
+                <option value="deactive">deactive</option>
+            </select>
+            <input type="hidden" name="original_status" value="<?= $exam['status']; ?>">
 
             <p>Title: </p>
             <input value="<?= htmlspecialchars($exam['title']) ?>" type="text" name="title" class="box">
