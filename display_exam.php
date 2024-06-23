@@ -114,14 +114,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         <h1 class="heading">Exam name: " <?= htmlspecialchars($exam['title']) ?> "</h1>
         <h1 class="heading">Timer: <span id="timer"></span></h1>
 
-        <form action="" method="post" enctype="multipart/form-data">
+        <form id="examForm" action="" method="post" enctype="multipart/form-data">
         <input type="hidden" id="exam_duration" value="<?= htmlspecialchars($exam['duration']) ?>">
-
-        <p>Your Name: </p>
-        <input type="text" name="name" placeholder="Enter Your Full Name" class="box" required>
-
-        <p>Your department : </p>
-        <input type="text" name="department" placeholder="Enter Your Department " class="box" required>
 
         <p>Title: </p>
         <input value="<?= htmlspecialchars($exam['title']) ?>" type="text" name="title" class="box" readonly>

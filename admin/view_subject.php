@@ -134,10 +134,10 @@ if (isset($_POST['delete_video'])) {
                                                                } else {
                                                                   echo 'color:red';
                                                                } ?>"></i><span style="<?php if ($fecth_videos['status'] == 'active') {
-                                                                                                                                                                                       echo 'color:limegreen';
-                                                                                                                                                                                    } else {
-                                                                                                                                                                                       echo 'color:red';
-                                                                                                                                                                                    } ?>"><?= $fecth_videos['status']; ?></span></div>
+                                                                                          echo 'color:limegreen';
+                                                                                       } else {
+                                                                                          echo 'color:red';
+                                                                                       } ?>"><?= $fecth_videos['status']; ?></span></div>
                      <div><i class="fas fa-calendar"></i><span><?= $fecth_videos['date']; ?></span></div>
                   </div>
                   <img src="../uploaded_files/<?= $fecth_videos['thumb']; ?>" class="thumb" alt="">
@@ -147,7 +147,7 @@ if (isset($_POST['delete_video'])) {
                      <a href="display_exam.php?exam_id=<?= $video_id; ?>" class="option-btn">update</a>
                      <input type="submit" value="delete" class="delete-btn" onclick="return confirm('delete this exam?');" name="delete_video">
                   </form>
-                  <a href="view_students.php" class="btn">view students</a>
+                  <a href="view_students.php?exam_id=<?= $video_id; ?>" class="btn">view students</a>
                </div>
          <?php
             }
