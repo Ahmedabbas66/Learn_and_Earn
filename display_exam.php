@@ -115,63 +115,63 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         <h1 class="heading">Timer: <span id="timer"></span></h1>
 
         <form id="examForm" action="" method="post" enctype="multipart/form-data">
-        <input type="hidden" id="exam_duration" value="<?= htmlspecialchars($exam['duration']) ?>">
+            <input type="hidden" id="exam_duration" value="<?= htmlspecialchars($exam['duration']) ?>">
 
-        <p>Title: </p>
-        <input value="<?= htmlspecialchars($exam['title']) ?>" type="text" name="title" class="box" readonly>
-        <input type="hidden" name="original_title" value="<?= htmlspecialchars($exam['title']) ?>">
+            <p>Title: </p>
+            <input value="<?= htmlspecialchars($exam['title']) ?>" type="text" name="title" class="box" readonly>
+            <input type="hidden" name="original_title" value="<?= htmlspecialchars($exam['title']) ?>">
 
-        <p>Description: </p>
-        <textarea name="description" class="box" required maxlength="1000" cols="30" rows="10" readonly><?= htmlspecialchars($exam['description']) ?></textarea>
-        <input type="hidden" name="original_description" value="<?= htmlspecialchars($exam['description']) ?>">
+            <p>Description: </p>
+            <textarea name="description" class="box" required maxlength="1000" cols="30" rows="10" readonly><?= htmlspecialchars($exam['description']) ?></textarea>
+            <input type="hidden" name="original_description" value="<?= htmlspecialchars($exam['description']) ?>">
 
-        <p>Subject: </p>
-        <input value="<?= htmlspecialchars($exam['subject_title']) ?>" type="text" name="subject" readonly class="box">
-        <input type="hidden" name="original_subject" value="<?= htmlspecialchars($exam['subject_title']) ?>">
+            <p>Subject: </p>
+            <input value="<?= htmlspecialchars($exam['subject_title']) ?>" type="text" name="subject" readonly class="box">
+            <input type="hidden" name="original_subject" value="<?= htmlspecialchars($exam['subject_title']) ?>">
 
-        <p>Time and Date: </p>
-        <input value="<?= htmlspecialchars($exam['time']) ?>" type="time" name="time" required class="box" readonly>
-        <input type="hidden" name="original_time" value="<?= htmlspecialchars($exam['time']) ?>">
-        <input value="<?= htmlspecialchars($exam['date']) ?>" type="date" name="date" required class="box" readonly>
-        <input type="hidden" name="original_date" value="<?= htmlspecialchars($exam['date']) ?>">
+            <p>Time and Date: </p>
+            <input value="<?= htmlspecialchars($exam['time']) ?>" type="time" name="time" required class="box" readonly>
+            <input type="hidden" name="original_time" value="<?= htmlspecialchars($exam['time']) ?>">
+            <input value="<?= htmlspecialchars($exam['date']) ?>" type="date" name="date" required class="box" readonly>
+            <input type="hidden" name="original_date" value="<?= htmlspecialchars($exam['date']) ?>">
 
-        <p>Exam Duration Time in MINs: </p>
-        <input value="<?= htmlspecialchars($exam['duration']) ?>" type="number" name="duration" required class="box" readonly>
-        <input type="hidden" name="original_duration" value="<?= htmlspecialchars($exam['duration']) ?>">
+            <p>Exam Duration Time in MINs: </p>
+            <input value="<?= htmlspecialchars($exam['duration']) ?>" type="number" name="duration" required class="box" readonly>
+            <input type="hidden" name="original_duration" value="<?= htmlspecialchars($exam['duration']) ?>">
 
-        <p>Exam Degree: </p>
-        <input value="<?= htmlspecialchars($exam['degree']) ?>" type="number" name="degree" required class="box" readonly>
-        <input type="hidden" name="original_degree" value="<?= htmlspecialchars($exam['degree']) ?>">
+            <p>Exam Degree: </p>
+            <input value="<?= htmlspecialchars($exam['degree']) ?>" type="number" name="degree" required class="box" readonly>
+            <input type="hidden" name="original_degree" value="<?= htmlspecialchars($exam['degree']) ?>">
 
-        <div id="componentContainer">
-            <?php foreach ($questions as $index => $question) : ?>
-                <p>Question <?= $index + 1 ?>: </p>
-                <input value="<?= htmlspecialchars($question['text']) ?>" type="text" name="questions[<?= $question['id'] ?>]" required class="box" readonly>
-                <input type="hidden" name="original_questions[<?= $question['id'] ?>]" value="<?= htmlspecialchars($question['text']) ?>">
+            <div id="componentContainer">
+                <?php foreach ($questions as $index => $question) : ?>
+                    <p>Question <?= $index + 1 ?>: </p>
+                    <input value="<?= htmlspecialchars($question['text']) ?>" type="text" name="questions[<?= $question['id'] ?>]" required class="box" readonly>
+                    <input type="hidden" name="original_questions[<?= $question['id'] ?>]" value="<?= htmlspecialchars($question['text']) ?>">
 
-                <div class="options">
-                    <?php
-                    $select_options = $conn->prepare("SELECT * FROM options WHERE question_id = ?");
-                    $select_options->execute([$question['id']]);
-                    $options = $select_options->fetchAll(PDO::FETCH_ASSOC);
-                    $letters = ['A', 'B', 'C', 'D'];
-                    $counter = 0;
-                    foreach ($options as $option) :
-                        $letter = $letters[$counter++];
-                    ?>
-                        <div class="option">
-                            <p>
-                                <input type="radio" name="correct_option[<?= $question['id'] ?>]" value="<?= $option['id'] ?>" required> <?= $letter ?>
-                            </p>
-                            <input value="<?= htmlspecialchars($option['text']) ?>" type="text" name="options[<?= $question['id'] ?>][<?= $option['id'] ?>]" class="box" readonly>
-                            <input type="hidden" name="original_options[<?= $question['id'] ?>][<?= $option['id'] ?>]" value="<?= htmlspecialchars($option['text']) ?>">
-                        </div>
-                    <?php endforeach; ?>
-                </div>
-            <?php endforeach; ?>
-        </div>
-        <input type="submit" value="Submit Exam" name="update" class="btn">
-    </form>
+                    <div class="options">
+                        <?php
+                        $select_options = $conn->prepare("SELECT * FROM options WHERE question_id = ?");
+                        $select_options->execute([$question['id']]);
+                        $options = $select_options->fetchAll(PDO::FETCH_ASSOC);
+                        $letters = ['A', 'B', 'C', 'D'];
+                        $counter = 0;
+                        foreach ($options as $option) :
+                            $letter = $letters[$counter++];
+                        ?>
+                            <div class="option">
+                                <p>
+                                    <input type="radio" name="correct_option[<?= $question['id'] ?>]" value="<?= $option['id'] ?>" required> <?= $letter ?>
+                                </p>
+                                <input value="<?= htmlspecialchars($option['text']) ?>" type="text" name="options[<?= $question['id'] ?>][<?= $option['id'] ?>]" class="box" readonly>
+                                <input type="hidden" name="original_options[<?= $question['id'] ?>][<?= $option['id'] ?>]" value="<?= htmlspecialchars($option['text']) ?>">
+                            </div>
+                        <?php endforeach; ?>
+                    </div>
+                <?php endforeach; ?>
+            </div>
+            <input type="submit" value="Submit Exam" name="update" class="btn">
+        </form>
 
     </section>
 
@@ -287,7 +287,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     </script>
 
 
-    <script src="js/admin_script.js"></script>
+    <script src="js/script.js"></script>
 
 </body>
 
