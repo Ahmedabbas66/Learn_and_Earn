@@ -66,8 +66,7 @@ $students = $select_students->fetchAll(PDO::FETCH_ASSOC);
                 <p class="empty">no students added yet!</p>
             <?php else : ?>
                 <?php foreach ($students as $student) : ?>
-                    <a href="display_exam.php?exam_id=<?= $fetch_exams['id']; ?>" class="box">
-                        <i class="fa-solid fa-eye"></i>
+                    <a href="view_answer.php?user_id=<?= htmlspecialchars($student['user_id']) ?>&exam_id=<?= $exam_id ?>" class="box"> <i class="fa-solid fa-eye"></i>
                         <img src="../uploaded_files/<?= $student['image']; ?>" alt="">
                         <h3><?= htmlspecialchars($student['name']) ?></h3>
                     </a>
