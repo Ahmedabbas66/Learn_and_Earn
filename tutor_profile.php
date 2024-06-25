@@ -26,6 +26,14 @@ if (isset($_POST['tutor_fetch'])) {
    $count_contents->execute([$tutor_id]);
    $total_contents = $count_contents->rowCount();
 
+   $select_subjects = $conn->prepare("SELECT * FROM `subject` WHERE tutor_id = ?");
+   $select_subjects->execute([$tutor_id]);
+   $total_subjects = $select_subjects->rowCount();
+
+   $select_exams = $conn->prepare("SELECT * FROM `exams` WHERE tutor_id = ?");
+   $select_exams->execute([$tutor_id]);
+   $total_exams = $select_exams->rowCount();
+
    $count_likes = $conn->prepare("SELECT * FROM `likes` WHERE tutor_id = ?");
    $count_likes->execute([$tutor_id]);
    $total_likes = $count_likes->rowCount();
@@ -74,8 +82,8 @@ if (isset($_POST['tutor_fetch'])) {
             <span><?= $fetch_tutor['profession']; ?></span>
          </div>
          <div class="flex">
-            <p>total subjects : <span><?= $total_playlists; ?></span></p>
-            <p>total exams : <span><?= $total_contents; ?></span></p>
+            <p>total subjects : <span><?= $total_subjects; ?></span></p>
+            <p>total exams : <span><?= $total_exams; ?></span></p>
             <p>total playlists : <span><?= $total_playlists; ?></span></p>
             <p>total videos : <span><?= $total_contents; ?></span></p>
             <p>total likes : <span><?= $total_likes; ?></span></p>
@@ -89,12 +97,12 @@ if (isset($_POST['tutor_fetch'])) {
 
    <section class="courses">
 
-      <h1 class="heading">latest exams</h1>
+      <h1 class="heading">latest subject</h1>
 
       <div class="box-container">
 
          <?php
-         $select_courses = $conn->prepare("SELECT * FROM `playlist` WHERE tutor_id = ? AND status = ?");
+         $select_courses = $conn->prepare("SELECT * FROM `subject` WHERE tutor_id = ? AND status = ?");
          $select_courses->execute([$tutor_id, 'active']);
          if ($select_courses->rowCount() > 0) {
             while ($fetch_course = $select_courses->fetch(PDO::FETCH_ASSOC)) {

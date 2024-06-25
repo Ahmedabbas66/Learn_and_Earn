@@ -67,7 +67,7 @@ $total_bookmarked = $select_bookmark->rowCount();
                      <span>saved playlists</span>
                   </div>
                </div>
-               <a href="#" class="inline-btn">view playlists</a>
+               <a href="bookmark.php" class="inline-btn">view playlists</a>
             </div>
 
             <div class="box">
@@ -78,7 +78,7 @@ $total_bookmarked = $select_bookmark->rowCount();
                      <span>liked tutorials</span>
                   </div>
                </div>
-               <a href="#" class="inline-btn">view liked</a>
+               <a href="likes.php" class="inline-btn">view liked</a>
             </div>
 
             <div class="box">
@@ -89,7 +89,7 @@ $total_bookmarked = $select_bookmark->rowCount();
                      <span>video comments</span>
                   </div>
                </div>
-               <a href="#" class="inline-btn">view comments</a>
+               <a href="comments.php" class="inline-btn">view comments</a>
             </div>
 
          </div>
@@ -112,12 +112,7 @@ $total_bookmarked = $select_bookmark->rowCount();
 
 
    <!-- footer section starts  -->
-
-   <footer class="footer">
-
-      &copy; copyright @ 2022 by <span>mr. web designer</span> | all rights reserved!
-
-   </footer>
+   <?php include 'components/footer.php'; ?>
 
    <!-- footer section ends -->
 

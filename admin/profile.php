@@ -17,6 +17,14 @@ $select_contents = $conn->prepare("SELECT * FROM `content` WHERE tutor_id = ?");
 $select_contents->execute([$tutor_id]);
 $total_contents = $select_contents->rowCount();
 
+$select_subjects = $conn->prepare("SELECT * FROM `subject` WHERE tutor_id = ?");
+$select_subjects->execute([$tutor_id]);
+$total_subjects = $select_subjects->rowCount();
+
+$select_exams = $conn->prepare("SELECT * FROM `exams` WHERE tutor_id = ?");
+$select_exams->execute([$tutor_id]);
+$total_exams = $select_exams->rowCount();
+
 $select_likes = $conn->prepare("SELECT * FROM `likes` WHERE tutor_id = ?");
 $select_likes->execute([$tutor_id]);
 $total_likes = $select_likes->rowCount();
@@ -61,12 +69,12 @@ $total_comments = $select_comments->rowCount();
          </div>
          <div class="flex">
             <div class="box">
-               <span><?= $total_playlists; ?></span>
+               <span><?= $total_subjects; ?></span>
                <p>total subjects</p>
                <a href="subjects.php" class="btn">view subjects</a>
             </div>
             <div class="box">
-               <span><?= $total_contents; ?></span>
+               <span><?= $total_exams; ?></span>
                <p>total exams</p>
                <a href="exams.php" class="btn">view exams</a>
             </div>

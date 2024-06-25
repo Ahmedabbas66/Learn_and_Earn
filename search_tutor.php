@@ -60,6 +60,14 @@ if (isset($_COOKIE['user_id'])) {
                   $count_contents->execute([$tutor_id]);
                   $total_contents = $count_contents->rowCount();
 
+                  $select_subjects = $conn->prepare("SELECT * FROM `subject` WHERE tutor_id = ?");
+                  $select_subjects->execute([$tutor_id]);
+                  $total_subjects = $select_subjects->rowCount();
+
+                  $select_exams = $conn->prepare("SELECT * FROM `exams` WHERE tutor_id = ?");
+                  $select_exams->execute([$tutor_id]);
+                  $total_exams = $select_exams->rowCount();
+
                   $count_likes = $conn->prepare("SELECT * FROM `likes` WHERE tutor_id = ?");
                   $count_likes->execute([$tutor_id]);
                   $total_likes = $count_likes->rowCount();
@@ -76,8 +84,8 @@ if (isset($_COOKIE['user_id'])) {
                            <span><?= $fetch_tutor['profession']; ?></span>
                         </div>
                      </div>
-                     <p>subjects : <span><?= $total_playlists; ?></span></p>
-                     <p>total exams : <span><?= $total_contents ?></span></p>
+                     <p>subjects : <span><?= $total_subjects; ?></span></p>
+                     <p>total exams : <span><?= $total_exams; ?></span></p>
                      <p>playlists : <span><?= $total_playlists; ?></span></p>
                      <p>total videos : <span><?= $total_contents ?></span></p>
                      <p>total likes : <span><?= $total_likes ?></span></p>
