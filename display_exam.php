@@ -40,12 +40,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $insert_answer->execute([$attempt_id, $question_id, $selected_option_id]);
         }
 
-        $conn->commit();
-        // echo "<script>window.location.href = 'home.php';</script>";
-    } catch (Exception $e) {
-        $conn->rollBack();
-        echo "<script>alert('Failed to submit the exam. Please try again.');</script>";
-    }
+    echo "Exam submitted successfully!";
 }
 ?>
 
@@ -63,6 +58,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     <!-- custom css file link  -->
     <link rel="stylesheet" href="css/admin_style.css">
+
+    <script src="https://webgazer.cs.brown.edu/webgazer.js"></script>
 
     <style>
         .options {
@@ -105,9 +102,50 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         }
 
         #timer {
-            font-size: 20px;
-            font-weight: bold;
-            color: red;
+            padding-bottom: 1.8rem;
+            font-size: 2.5rem;
+            color: var(--black);
+            text-transform: capitalize;
+            margin-bottom: 2rem;
+        }
+    </style>
+    <style>
+        #warning {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            padding: 20px;
+            background-color: red;
+            color: white;
+            font-size: 24px;
+            display: none;
+            z-index: 1000;
+            border-radius: 30px;
+        }
+
+        #webgazerVideoFeed {
+            position: fixed;
+            top: 90px;
+            left: 1200px;
+            z-index: 1000;
+            width: 200px;
+            height: auto;
+        }
+
+        /* Adjust the position and appearance of the prediction points */
+        #webgazerFaceOverlay {
+            position: fixed;
+            top: 90px;
+            left: 1200px;
+            z-index: 1000;
+        }
+
+        #webgazerFaceFeedbackBox {
+            position: fixed;
+            top: 90px;
+            left: 1200px;
+            z-index: 1000;
         }
     </style>
 
@@ -116,6 +154,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 <body>
 
     <?php include 'components/user_exam_header.php'; ?>
+
+    <div id="warning">Please look at the screen!</div>
 
     <section class="video-form">
 
@@ -127,35 +167,27 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
             <p>Title: </p>
             <input value="<?= htmlspecialchars($exam['title']) ?>" type="text" name="title" class="box" readonly>
-            <input type="hidden" name="original_title" value="<?= htmlspecialchars($exam['title']) ?>">
 
             <p>Description: </p>
             <textarea name="description" class="box" required maxlength="1000" cols="30" rows="10" readonly><?= htmlspecialchars($exam['description']) ?></textarea>
-            <input type="hidden" name="original_description" value="<?= htmlspecialchars($exam['description']) ?>">
 
             <p>Subject: </p>
             <input value="<?= htmlspecialchars($exam['subject_title']) ?>" type="text" name="subject" readonly class="box">
-            <input type="hidden" name="original_subject" value="<?= htmlspecialchars($exam['subject_title']) ?>">
 
             <p>Time and Date: </p>
             <input value="<?= htmlspecialchars($exam['time']) ?>" type="time" name="time" required class="box" readonly>
-            <input type="hidden" name="original_time" value="<?= htmlspecialchars($exam['time']) ?>">
             <input value="<?= htmlspecialchars($exam['date']) ?>" type="date" name="date" required class="box" readonly>
-            <input type="hidden" name="original_date" value="<?= htmlspecialchars($exam['date']) ?>">
 
             <p>Exam Duration Time in MINs: </p>
             <input value="<?= htmlspecialchars($exam['duration']) ?>" type="number" name="duration" required class="box" readonly>
-            <input type="hidden" name="original_duration" value="<?= htmlspecialchars($exam['duration']) ?>">
 
             <p>Exam Degree: </p>
             <input value="<?= htmlspecialchars($exam['degree']) ?>" type="number" name="degree" required class="box" readonly>
-            <input type="hidden" name="original_degree" value="<?= htmlspecialchars($exam['degree']) ?>">
 
             <div id="componentContainer">
                 <?php foreach ($questions as $index => $question) : ?>
                     <p>Question <?= $index + 1 ?>: </p>
                     <input value="<?= htmlspecialchars($question['text']) ?>" type="text" name="questions[<?= $question['id'] ?>]" required class="box" readonly>
-                    <input type="hidden" name="original_questions[<?= $question['id'] ?>]" value="<?= htmlspecialchars($question['text']) ?>">
 
                     <div class="options">
                         <?php
@@ -172,7 +204,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                     <input type="radio" name="correct_option[<?= $question['id'] ?>]" value="<?= $option['id'] ?>" required> <?= $letter ?>
                                 </p>
                                 <input value="<?= htmlspecialchars($option['text']) ?>" type="text" name="options[<?= $question['id'] ?>][<?= $option['id'] ?>]" class="box" readonly>
-                                <input type="hidden" name="original_options[<?= $question['id'] ?>][<?= $option['id'] ?>]" value="<?= htmlspecialchars($option['text']) ?>">
                             </div>
                         <?php endforeach; ?>
                     </div>
@@ -210,7 +241,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 }
             }, 1000);
         };
+    </script>
 
+    <script>
         document.addEventListener('keydown', function(event) {
             if (event.ctrlKey && event.key === 'r') {
                 event.preventDefault();
