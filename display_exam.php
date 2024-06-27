@@ -26,21 +26,20 @@ $select_questions->execute([$exam_id]);
 $questions = $select_questions->fetchAll(PDO::FETCH_ASSOC);
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    try {
-        $conn->beginTransaction();
+    // Insert a new exam attempt
+    $insert_attempt = $conn->prepare("INSERT INTO exam_attempts (user_id, exam_id) VALUES (?, ?)");
+    $insert_attempt->execute([$user_id, $exam_id]);
+    $attempt_id = $conn->lastInsertId();
 
-        // Insert a new exam attempt
-        $insert_attempt = $conn->prepare("INSERT INTO exam_attempts (user_id, exam_id) VALUES (?, ?)");
-        $insert_attempt->execute([$user_id, $exam_id]);
-        $attempt_id = $conn->lastInsertId();
+    // Insert user answers
+    foreach ($_POST['correct_option'] as $question_id => $selected_option_id) {
+        $insert_answer = $conn->prepare("INSERT INTO user_answers (attempt_id, question_id, selected_option_id) VALUES (?, ?, ?)");
+        $insert_answer->execute([$attempt_id, $question_id, $selected_option_id]);
+    }
 
-        // Insert user answers
-        foreach ($_POST['correct_option'] as $question_id => $selected_option_id) {
-            $insert_answer = $conn->prepare("INSERT INTO user_answers (attempt_id, question_id, selected_option_id) VALUES (?, ?, ?)");
-            $insert_answer->execute([$attempt_id, $question_id, $selected_option_id]);
-        }
-
-    echo "Exam submitted successfully!";
+    // Redirect to home.php after submission
+    header("Location: home.php");
+    exit();
 }
 ?>
 
@@ -162,7 +161,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         <h1 class="heading">Exam name: " <?= htmlspecialchars($exam['title']) ?> "</h1>
         <h1 class="heading">Timer: <span id="timer"></span></h1>
 
-        <form id="examForm" action="home.php" method="post" enctype="multipart/form-data">
+        <form id="examForm" action="" method="post" enctype="multipart/form-data">
             <input type="hidden" id="exam_duration" value="<?= htmlspecialchars($exam['duration']) ?>">
 
             <p>Title: </p>
@@ -240,10 +239,42 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     submitExam();
                 }
             }, 1000);
-        };
-    </script>
 
-    <script>
+            const warning = document.getElementById('warning');
+            const screenCenterX = window.innerWidth / 2;
+            const screenCenterY = window.innerHeight / 2;
+            const horizontalTolerance = window.innerWidth / 3;
+            const verticalTolerance = window.innerHeight / 2;
+
+            webgazer.setGazeListener((data, elapsedTime) => {
+                if (data) {
+                    const x = data.x;
+                    const y = data.y;
+
+                    const screenLeftBoundary = screenCenterX - horizontalTolerance;
+                    const screenRightBoundary = screenCenterX + horizontalTolerance;
+                    const screenTopBoundary = screenCenterY - verticalTolerance;
+                    const screenBottomBoundary = screenCenterY + verticalTolerance;
+
+                    if (x < screenLeftBoundary || x > screenRightBoundary || y < screenTopBoundary || y > screenBottomBoundary) {
+                        warning.style.display = 'block';
+                    } else {
+                        warning.style.display = 'none';
+                    }
+                }
+            }).begin();
+
+            webgazer.showVideoPreview(true)
+                .showPredictionPoints(true)
+                .applyKalmanFilter(true)
+                .showFaceOverlay(true);
+
+            window.onbeforeunload = function() {
+                webgazer.end();
+            };
+
+        };
+
         document.addEventListener('keydown', function(event) {
             if (event.ctrlKey && event.key === 'r') {
                 event.preventDefault();
@@ -272,11 +303,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         window.onresize = function() {
             submitExam();
         };
-
-        // document.querySelector('input[type="submit"]').addEventListener('click', function() {
-        //     submitExam();
-        // });
     </script>
+
 
     <script src="js/script.js"></script>
 
