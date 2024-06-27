@@ -125,31 +125,31 @@ $questions = $select_questions->fetchAll(PDO::FETCH_ASSOC);
         <h1 class="heading">student name: " <?= htmlspecialchars($user['name']) ?> ".</h1>
 
         <h1 class="heading">student degree: <br> " <br>
-        <?php
-        foreach ($attempts as $attempt) {
-            $correct_answers_count = 0;
-            $total_questions = count($questions);
+            <?php
+            foreach ($attempts as $attempt) {
+                $correct_answers_count = 0;
+                $total_questions = count($questions);
 
-            foreach ($questions as $question) {
-                // Fetch the user's answer for this question
-                $select_answer = $conn->prepare("SELECT ua.*, o.text as option_text FROM user_answers ua JOIN options o ON ua.selected_option_id = o.id WHERE ua.attempt_id = ? AND ua.question_id = ?");
-                $select_answer->execute([$attempt['id'], $question['id']]);
-                $user_answer = $select_answer->fetch(PDO::FETCH_ASSOC);
+                foreach ($questions as $question) {
+                    // Fetch the user's answer for this question
+                    $select_answer = $conn->prepare("SELECT ua.*, o.text as option_text FROM user_answers ua JOIN options o ON ua.selected_option_id = o.id WHERE ua.attempt_id = ? AND ua.question_id = ?");
+                    $select_answer->execute([$attempt['id'], $question['id']]);
+                    $user_answer = $select_answer->fetch(PDO::FETCH_ASSOC);
 
-                // Fetch the correct answer for this question
-                $select_correct_answer = $conn->prepare("SELECT o.text as correct_option_text FROM options o WHERE o.question_id = ? AND o.is_correct = 1");
-                $select_correct_answer->execute([$question['id']]);
-                $correct_answer = $select_correct_answer->fetch(PDO::FETCH_ASSOC);
+                    // Fetch the correct answer for this question
+                    $select_correct_answer = $conn->prepare("SELECT o.text as correct_option_text FROM options o WHERE o.question_id = ? AND o.is_correct = 1");
+                    $select_correct_answer->execute([$question['id']]);
+                    $correct_answer = $select_correct_answer->fetch(PDO::FETCH_ASSOC);
 
-                if ($user_answer && $correct_answer && $user_answer['option_text'] == $correct_answer['correct_option_text']) {
-                    $correct_answers_count++;
+                    if ($user_answer && $correct_answer && $user_answer['option_text'] == $correct_answer['correct_option_text']) {
+                        $correct_answers_count++;
+                    }
                 }
-            }
 
-            echo "Attempt on (" . htmlspecialchars($attempt['attempt_date']) . "): " . $correct_answers_count . " / " . $total_questions . " questions.<br>";
-        }
-        ?>
-        "</h1>
+                echo "Attempt on (" . htmlspecialchars($attempt['attempt_date']) . "): " . $correct_answers_count . " / " . $total_questions . " questions.<br>";
+            }
+            ?>
+            "</h1>
 
         <!-- <h1 class="heading" id="student-degree">student degree: " "</h1> -->
 
@@ -215,7 +215,14 @@ $questions = $select_questions->fetchAll(PDO::FETCH_ASSOC);
                             ?>
                                 <div class="option">
                                     <p>
-                                        <input type="radio" name="correct_option[<?= $question['id'] ?>]attempt[<?= $attempt['id'] ?>]" value="<?= $option['id'] ?>" <?= htmlspecialchars($option['text']) == htmlspecialchars($user_answer['option_text']) ? 'checked' : '' ?> disabled> <?= $letter ?>
+                                        <input type="radio" name="correct_option[<?= $attempt['id'] ?>][<?= $question['id'] ?>]" value="<?= $option['id'] ?>" <?php
+                                                                                                                                                                // Check if user's answer matches this option
+                                                                                                                                                                if ($user_answer && $option['id'] == $user_answer['selected_option_id']) {
+                                                                                                                                                                    echo 'checked'; // Mark as checked if it's the user's selected option
+                                                                                                                                                                } elseif (!$user_answer && $option['is_correct'] == 1) {
+                                                                                                                                                                    echo 'style="color: green;"'; // Mark as correct answer if no user answer and it's correct
+                                                                                                                                                                }
+                                                                                                                                                                ?> disabled> <?= $letter ?>
                                     </p>
                                     <input value="<?= htmlspecialchars($option['text']) ?>" type="text" name="options[<?= $question['id'] ?>][<?= $option['id'] ?>]" class="box" readonly <?= htmlspecialchars($option['text']) == htmlspecialchars($correct_answer['correct_option_text']) ? 'style="color: green;"' : '' ?>>
                                     <input type="hidden" name="original_options[<?= $question['id'] ?>][<?= $option['id'] ?>]" value="<?= htmlspecialchars($option['text']) ?>">

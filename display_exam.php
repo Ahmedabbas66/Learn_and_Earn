@@ -37,7 +37,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $insert_answer->execute([$attempt_id, $question_id, $selected_option_id]);
     }
 
-    echo "Exam submitted successfully!";
+    // Redirect to home.php after submission
+    header("Location: home.php");
+    exit();
 }
 ?>
 
@@ -55,6 +57,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     <!-- custom css file link  -->
     <link rel="stylesheet" href="css/admin_style.css">
+
+    <script src="https://webgazer.cs.brown.edu/webgazer.js"></script>
 
     <style>
         .options {
@@ -97,9 +101,50 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         }
 
         #timer {
-            font-size: 20px;
-            font-weight: bold;
-            color: red;
+            padding-bottom: 1.8rem;
+            font-size: 2.5rem;
+            color: var(--black);
+            text-transform: capitalize;
+            margin-bottom: 2rem;
+        }
+    </style>
+    <style>
+        #warning {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            padding: 20px;
+            background-color: red;
+            color: white;
+            font-size: 24px;
+            display: none;
+            z-index: 1000;
+            border-radius: 30px;
+        }
+
+        #webgazerVideoFeed {
+            position: fixed;
+            top: 90px;
+            left: 1200px;
+            z-index: 1000;
+            width: 200px;
+            height: auto;
+        }
+
+        /* Adjust the position and appearance of the prediction points */
+        #webgazerFaceOverlay {
+            position: fixed;
+            top: 90px;
+            left: 1200px;
+            z-index: 1000;
+        }
+
+        #webgazerFaceFeedbackBox {
+            position: fixed;
+            top: 90px;
+            left: 1200px;
+            z-index: 1000;
         }
     </style>
 
@@ -108,6 +153,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 <body>
 
     <?php include 'components/user_exam_header.php'; ?>
+
+    <div id="warning">Please look at the screen!</div>
 
     <section class="video-form">
 
@@ -119,35 +166,27 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
             <p>Title: </p>
             <input value="<?= htmlspecialchars($exam['title']) ?>" type="text" name="title" class="box" readonly>
-            <input type="hidden" name="original_title" value="<?= htmlspecialchars($exam['title']) ?>">
 
             <p>Description: </p>
             <textarea name="description" class="box" required maxlength="1000" cols="30" rows="10" readonly><?= htmlspecialchars($exam['description']) ?></textarea>
-            <input type="hidden" name="original_description" value="<?= htmlspecialchars($exam['description']) ?>">
 
             <p>Subject: </p>
             <input value="<?= htmlspecialchars($exam['subject_title']) ?>" type="text" name="subject" readonly class="box">
-            <input type="hidden" name="original_subject" value="<?= htmlspecialchars($exam['subject_title']) ?>">
 
             <p>Time and Date: </p>
             <input value="<?= htmlspecialchars($exam['time']) ?>" type="time" name="time" required class="box" readonly>
-            <input type="hidden" name="original_time" value="<?= htmlspecialchars($exam['time']) ?>">
             <input value="<?= htmlspecialchars($exam['date']) ?>" type="date" name="date" required class="box" readonly>
-            <input type="hidden" name="original_date" value="<?= htmlspecialchars($exam['date']) ?>">
 
             <p>Exam Duration Time in MINs: </p>
             <input value="<?= htmlspecialchars($exam['duration']) ?>" type="number" name="duration" required class="box" readonly>
-            <input type="hidden" name="original_duration" value="<?= htmlspecialchars($exam['duration']) ?>">
 
             <p>Exam Degree: </p>
             <input value="<?= htmlspecialchars($exam['degree']) ?>" type="number" name="degree" required class="box" readonly>
-            <input type="hidden" name="original_degree" value="<?= htmlspecialchars($exam['degree']) ?>">
 
             <div id="componentContainer">
                 <?php foreach ($questions as $index => $question) : ?>
                     <p>Question <?= $index + 1 ?>: </p>
                     <input value="<?= htmlspecialchars($question['text']) ?>" type="text" name="questions[<?= $question['id'] ?>]" required class="box" readonly>
-                    <input type="hidden" name="original_questions[<?= $question['id'] ?>]" value="<?= htmlspecialchars($question['text']) ?>">
 
                     <div class="options">
                         <?php
@@ -164,7 +203,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                     <input type="radio" name="correct_option[<?= $question['id'] ?>]" value="<?= $option['id'] ?>" required> <?= $letter ?>
                                 </p>
                                 <input value="<?= htmlspecialchars($option['text']) ?>" type="text" name="options[<?= $question['id'] ?>][<?= $option['id'] ?>]" class="box" readonly>
-                                <input type="hidden" name="original_options[<?= $question['id'] ?>][<?= $option['id'] ?>]" value="<?= htmlspecialchars($option['text']) ?>">
                             </div>
                         <?php endforeach; ?>
                     </div>
@@ -178,6 +216,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     <?php include 'components/footer.php'; ?>
 
     <script>
+        function submitExam() {
+            document.getElementById('examForm').submit();
+        }
+
         window.onload = function() {
             var duration = document.getElementById('exam_duration').value;
             var timer = document.getElementById('timer');
@@ -194,14 +236,45 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
                 if (timeRemaining < 0) {
                     clearInterval(countdown);
-                    alert('Time is up! Submitting the exam.');
-                    document.getElementById('examForm').submit();
+                    submitExam();
                 }
             }, 1000);
-        };
-    </script>
 
-    <script>
+            const warning = document.getElementById('warning');
+            const screenCenterX = window.innerWidth / 2;
+            const screenCenterY = window.innerHeight / 2;
+            const horizontalTolerance = window.innerWidth / 3;
+            const verticalTolerance = window.innerHeight / 2;
+
+            webgazer.setGazeListener((data, elapsedTime) => {
+                if (data) {
+                    const x = data.x;
+                    const y = data.y;
+
+                    const screenLeftBoundary = screenCenterX - horizontalTolerance;
+                    const screenRightBoundary = screenCenterX + horizontalTolerance;
+                    const screenTopBoundary = screenCenterY - verticalTolerance;
+                    const screenBottomBoundary = screenCenterY + verticalTolerance;
+
+                    if (x < screenLeftBoundary || x > screenRightBoundary || y < screenTopBoundary || y > screenBottomBoundary) {
+                        warning.style.display = 'block';
+                    } else {
+                        warning.style.display = 'none';
+                    }
+                }
+            }).begin();
+
+            webgazer.showVideoPreview(true)
+                .showPredictionPoints(true)
+                .applyKalmanFilter(true)
+                .showFaceOverlay(true);
+
+            window.onbeforeunload = function() {
+                webgazer.end();
+            };
+
+        };
+
         document.addEventListener('keydown', function(event) {
             if (event.ctrlKey && event.key === 'r') {
                 event.preventDefault();
@@ -213,76 +286,22 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         });
 
         window.addEventListener('blur', function() {
-            // Show an alert with only an OK button
-            alert("You have switched away from the exam page. You will now be redirected to the home page.");
-
-            // Redirect to home.php
-            window.location.href = 'home.php';
+            submitExam();
         });
 
         window.addEventListener('beforeunload', function(event) {
-            // Customize the confirmation message
-            var confirmationMessage = "You are about to reload the page. You will now be redirected to the home page.";
-
-            // Show a custom confirmation dialog with only an OK button
-            if (confirm(confirmationMessage)) {
-                // Redirect to home.php
-                window.location.href = 'home.php';
-            }
-
-            // Set the confirmation message in some browsers
-            (event || window.event).returnValue = confirmationMessage; // For IE and Firefox
-            return confirmationMessage; // For other browsers
+            submitExam();
         });
 
-        // // Listen for keydown events on the window
-        // window.addEventListener('keydown', function(event) {
-        //     // Check if the key combination is Ctrl+Tab
-        //     if (event.ctrlKey && event.key === 'Tab') {
-        //         // Prevent the default browser behavior
-        //         event.preventDefault();
-        //     }
-        // });
-
-        // // Listen for keydown events on the window
-        // window.addEventListener('keydown', function(event) {
-        //     // Check if the key combination is Ctrl+Tab
-        //     if (event.ctrlKey && event.key === 'Tab') {
-        //         // Prevent the default browser behavior
-        //         event.preventDefault();
-        //         // Display an alert
-        //         alert("You have pressed Ctrl+Tab. Click OK to continue.");
-        //         window.location.href = "home.php";
-        //     }
-        // });
-
-        // Listen for keydown events on the window
         window.addEventListener('keydown', function(event) {
-            // Check if the key combination is Ctrl+Tab
             if (event.ctrlKey && event.key === 'Tab') {
-                // Prevent the default browser behavior
                 event.preventDefault();
-                // Redirect to home.php
-                window.location.href = "home.php";
+                submitExam();
             }
         });
-
-        // // Listen for fullscreen change events
-        // document.addEventListener('fullscreenchange', function(event) {
-        //     // Check if the page is not in fullscreen mode
-        //     if (!document.fullscreenElement) {
-        //         // Show a confirmation dialog with only an OK button
-        //         var confirmationMessage = "You are not in fullscreen mode. You will now be redirected to the home page.";
-        //         alert(confirmationMessage);
-
-        //         // Redirect to home.php
-        //         window.location.href = 'home.php';
-        //     }
-        // });
 
         window.onresize = function() {
-            alert("You have resized the window. Click OK to go to the home page.");
-            window.location.href = "home.php";
+            submitExam();
         };
     </script>
 
