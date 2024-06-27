@@ -26,18 +26,26 @@ $select_questions->execute([$exam_id]);
 $questions = $select_questions->fetchAll(PDO::FETCH_ASSOC);
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    // Insert a new exam attempt
-    $insert_attempt = $conn->prepare("INSERT INTO exam_attempts (user_id, exam_id) VALUES (?, ?)");
-    $insert_attempt->execute([$user_id, $exam_id]);
-    $attempt_id = $conn->lastInsertId();
+    try {
+        $conn->beginTransaction();
 
-    // Insert user answers
-    foreach ($_POST['correct_option'] as $question_id => $selected_option_id) {
-        $insert_answer = $conn->prepare("INSERT INTO user_answers (attempt_id, question_id, selected_option_id) VALUES (?, ?, ?)");
-        $insert_answer->execute([$attempt_id, $question_id, $selected_option_id]);
+        // Insert a new exam attempt
+        $insert_attempt = $conn->prepare("INSERT INTO exam_attempts (user_id, exam_id) VALUES (?, ?)");
+        $insert_attempt->execute([$user_id, $exam_id]);
+        $attempt_id = $conn->lastInsertId();
+
+        // Insert user answers
+        foreach ($_POST['correct_option'] as $question_id => $selected_option_id) {
+            $insert_answer = $conn->prepare("INSERT INTO user_answers (attempt_id, question_id, selected_option_id) VALUES (?, ?, ?)");
+            $insert_answer->execute([$attempt_id, $question_id, $selected_option_id]);
+        }
+
+        $conn->commit();
+        // echo "<script>window.location.href = 'home.php';</script>";
+    } catch (Exception $e) {
+        $conn->rollBack();
+        echo "<script>alert('Failed to submit the exam. Please try again.');</script>";
     }
-
-    echo "Exam submitted successfully!";
 }
 ?>
 
@@ -114,7 +122,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         <h1 class="heading">Exam name: " <?= htmlspecialchars($exam['title']) ?> "</h1>
         <h1 class="heading">Timer: <span id="timer"></span></h1>
 
-        <form id="examForm" action="" method="post" enctype="multipart/form-data">
+        <form id="examForm" action="home.php" method="post" enctype="multipart/form-data">
             <input type="hidden" id="exam_duration" value="<?= htmlspecialchars($exam['duration']) ?>">
 
             <p>Title: </p>
@@ -178,6 +186,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     <?php include 'components/footer.php'; ?>
 
     <script>
+        function submitExam() {
+            document.getElementById('examForm').submit();
+        }
+
         window.onload = function() {
             var duration = document.getElementById('exam_duration').value;
             var timer = document.getElementById('timer');
@@ -194,14 +206,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
                 if (timeRemaining < 0) {
                     clearInterval(countdown);
-                    alert('Time is up! Submitting the exam.');
-                    document.getElementById('examForm').submit();
+                    submitExam();
                 }
             }, 1000);
         };
-    </script>
 
-    <script>
         document.addEventListener('keydown', function(event) {
             if (event.ctrlKey && event.key === 'r') {
                 event.preventDefault();
@@ -213,79 +222,28 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         });
 
         window.addEventListener('blur', function() {
-            // Show an alert with only an OK button
-            alert("You have switched away from the exam page. You will now be redirected to the home page.");
-
-            // Redirect to home.php
-            window.location.href = 'home.php';
+            submitExam();
         });
 
         window.addEventListener('beforeunload', function(event) {
-            // Customize the confirmation message
-            var confirmationMessage = "You are about to reload the page. You will now be redirected to the home page.";
-
-            // Show a custom confirmation dialog with only an OK button
-            if (confirm(confirmationMessage)) {
-                // Redirect to home.php
-                window.location.href = 'home.php';
-            }
-
-            // Set the confirmation message in some browsers
-            (event || window.event).returnValue = confirmationMessage; // For IE and Firefox
-            return confirmationMessage; // For other browsers
+            submitExam();
         });
 
-        // // Listen for keydown events on the window
-        // window.addEventListener('keydown', function(event) {
-        //     // Check if the key combination is Ctrl+Tab
-        //     if (event.ctrlKey && event.key === 'Tab') {
-        //         // Prevent the default browser behavior
-        //         event.preventDefault();
-        //     }
-        // });
-
-        // // Listen for keydown events on the window
-        // window.addEventListener('keydown', function(event) {
-        //     // Check if the key combination is Ctrl+Tab
-        //     if (event.ctrlKey && event.key === 'Tab') {
-        //         // Prevent the default browser behavior
-        //         event.preventDefault();
-        //         // Display an alert
-        //         alert("You have pressed Ctrl+Tab. Click OK to continue.");
-        //         window.location.href = "home.php";
-        //     }
-        // });
-
-        // Listen for keydown events on the window
         window.addEventListener('keydown', function(event) {
-            // Check if the key combination is Ctrl+Tab
             if (event.ctrlKey && event.key === 'Tab') {
-                // Prevent the default browser behavior
                 event.preventDefault();
-                // Redirect to home.php
-                window.location.href = "home.php";
+                submitExam();
             }
         });
-
-        // // Listen for fullscreen change events
-        // document.addEventListener('fullscreenchange', function(event) {
-        //     // Check if the page is not in fullscreen mode
-        //     if (!document.fullscreenElement) {
-        //         // Show a confirmation dialog with only an OK button
-        //         var confirmationMessage = "You are not in fullscreen mode. You will now be redirected to the home page.";
-        //         alert(confirmationMessage);
-
-        //         // Redirect to home.php
-        //         window.location.href = 'home.php';
-        //     }
-        // });
 
         window.onresize = function() {
-            alert("You have resized the window. Click OK to go to the home page.");
-            window.location.href = "home.php";
+            submitExam();
         };
-    </script>
 
+        // document.querySelector('input[type="submit"]').addEventListener('click', function() {
+        //     submitExam();
+        // });
+    </script>
 
     <script src="js/script.js"></script>
 
