@@ -50,22 +50,6 @@ $total_bookmarked = $select_bookmark->rowCount();
       <h1 class="heading">quick options</h1>
 
       <div class="box-container">
-
-         <?php
-         if ($user_id != '') {
-         ?>
-            <div class="box">
-               <h3 class="title">likes and comments</h3>
-               <p>total likes : <span><?= $total_likes; ?></span></p>
-               <a href="likes.php" class="inline-btn">view likes</a>
-               <p>total comments : <span><?= $total_comments; ?></span></p>
-               <a href="comments.php" class="inline-btn">view comments</a>
-               <p>saved playlist : <span><?= $total_bookmarked; ?></span></p>
-               <a href="bookmark.php" class="inline-btn">view bookmark</a>
-            </div>
-         <?php
-         } else {
-         ?>
             <div class="box" style="text-align: center;">
                <h3 class="title">please login or register as a student</h3>
                <div class="flex-btn" style="padding-top: .5rem;">
@@ -73,9 +57,6 @@ $total_bookmarked = $select_bookmark->rowCount();
                   <a href="register.php" class="option-btn">register</a>
                </div>
             </div>
-         <?php
-         }
-         ?>
 
          <div class="box">
             <h3 class="title">top categories</h3>
@@ -126,7 +107,7 @@ $total_bookmarked = $select_bookmark->rowCount();
       <div class="box-container">
 
          <?php
-         $select_courses = $conn->prepare("SELECT * FROM `playlist` WHERE status = ? ORDER BY date DESC LIMIT 6");
+         $select_courses = $conn->prepare("SELECT * FROM `subject` WHERE status = ? ORDER BY date DESC LIMIT 6");
          $select_courses->execute(['active']);
          if ($select_courses->rowCount() > 0) {
             while ($fetch_course = $select_courses->fetch(PDO::FETCH_ASSOC)) {
