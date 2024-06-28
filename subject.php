@@ -1,5 +1,4 @@
 <?php
-
 include 'components/connect.php';
 
 if (isset($_COOKIE['user_id'])) {
@@ -16,9 +15,7 @@ if (isset($_GET['get_id'])) {
 }
 
 if (isset($_POST['save_list'])) {
-
     if ($user_id != '') {
-
         $list_id = $_POST['list_id'];
         $list_id = filter_var($list_id, FILTER_SANITIZE_STRING);
 
@@ -38,7 +35,6 @@ if (isset($_POST['save_list'])) {
         $message[] = 'please login first!';
     }
 }
-
 ?>
 
 <!DOCTYPE html>
@@ -56,6 +52,67 @@ if (isset($_POST['save_list'])) {
     <!-- custom css file link  -->
     <link rel="stylesheet" href="css/style.css">
 
+    <style>
+        #modal {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            padding: 20px;
+            background-color: #2c3e50;
+            color: white;
+            font-size: 18px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            z-index: 1001;
+            display: none;
+            border-radius: 10px;
+            max-width: 500px;
+            width: 100%;
+            /* padding-left: 20px;  */
+            /* margin-left: 10px; */
+        }
+
+        #modal h2 {
+            margin-bottom: 10px;
+        }
+
+        #modal p {
+            margin-bottom: 20px;
+        }
+
+        #modal button {
+            padding: 10px 20px;
+            font-size: 16px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-right: 10px;
+        }
+
+        #modal button.cancel {
+            background-color: #dc3545;
+        }
+
+        #blur-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 1000;
+            display: none;
+        } .rules-list {
+            list-style-type: decimal;
+            padding-left: 20px;
+        }
+
+        .rules-list li {
+            margin-bottom: 10px;
+        }
+    </style>
 </head>
 
 <body>
@@ -85,8 +142,6 @@ if (isset($_POST['save_list'])) {
                 $select_tutor = $conn->prepare("SELECT * FROM `tutors` WHERE id = ? LIMIT 1");
                 $select_tutor->execute([$fetch_subject['tutor_id']]);
                 $fetch_tutor = $select_tutor->fetch(PDO::FETCH_ASSOC);
-
-
             ?>
 
                 <div class="col">
@@ -140,11 +195,11 @@ if (isset($_POST['save_list'])) {
             if ($select_exams->rowCount() > 0) {
                 while ($fetch_exams = $select_exams->fetch(PDO::FETCH_ASSOC)) {
             ?>
-                    <a href="display_exam.php?exam_id=<?= $fetch_exams['id']; ?>" class="box">
+                    <div class="box" onclick="showRulesModal('<?= $fetch_exams['id']; ?>', '<?= htmlspecialchars($fetch_exams['title']); ?>')">
                         <i class="fa-solid fa-eye"></i>
                         <img src="uploaded_files/<?= $fetch_exams['thumb']; ?>" alt="">
                         <h3><?= $fetch_exams['title']; ?></h3>
-                    </a>
+                    </div>
             <?php
                 }
             } else {
@@ -158,20 +213,55 @@ if (isset($_POST['save_list'])) {
 
     <!-- videos container section ends -->
 
-
-
-
-
-
-
-
-
-
+    <!-- Modal for Exam Rules -->
+    <div id="blur-overlay"></div>
+    <div id="modal">
+    <h2>Exam Rules and Instructions</h2>
+    <ol class="rules-list">
+        <li>
+            <strong>Do Not Switch Tabs or Windows:</strong>
+            <p>Avoid using keyboard shortcuts like " Ctrl + Tab " or <br> " Alt + Tab " to switch between tabs or applications.</p>
+        </li>
+        <li>
+            <strong>Do Not Refresh the Page:</strong>
+            <p>Do not use " Ctrl + R " or the browser's reload button to refresh the page.</p>
+        </li>
+        <li>
+            <strong>Maintain Focus on the Screen:</strong>
+            <p>Ensure you are looking at the screen throughout the exam. Avoid looking away as this exam is being monitored.</p>
+        </li>
+        <li>
+            <strong>Strict Monitoring:</strong>
+            <p>The exam is well monitored. Follow all the instructions carefully to avoid the cancellation of your exam.</p>
+        </li>
+    </ol>
+        <button onclick="hideModal()">Cancel</button>
+        <button class="proceed">OK</button>
+    </div>
 
     <?php include 'components/footer.php'; ?>
 
     <!-- custom js file link  -->
     <script src="js/script.js"></script>
+
+    <script>
+        function showRulesModal(examId, examTitle) {
+            document.getElementById('modal').style.display = 'block';
+            document.getElementById('blur-overlay').style.display = 'block';
+            document.body.style.overflow = 'hidden'; // Disable scrolling
+
+            document.querySelector('#modal .proceed').onclick = function() {
+                hideModal();
+                window.location.href = 'display_exam.php?exam_id=' + examId;
+            };
+        }
+
+        function hideModal() {
+            document.getElementById('modal').style.display = 'none';
+            document.getElementById('blur-overlay').style.display = 'none';
+            document.body.style.overflow = 'auto'; // Enable scrolling
+        }
+    </script>
 
 </body>
 
