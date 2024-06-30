@@ -244,7 +244,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             const screenCenterX = window.innerWidth / 2;
             const screenCenterY = window.innerHeight / 2;
             const horizontalTolerance = window.innerWidth / 3;
-            const verticalTolerance = window.innerHeight / 2;
+            const verticalTolerance = window.innerHeight / 3;
 
             webgazer.setGazeListener((data, elapsedTime) => {
                 if (data) {
@@ -265,7 +265,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             }).begin();
 
             webgazer.showVideoPreview(true)
-                .showPredictionPoints(true)
+                .showPredictionPoints(false)
                 .applyKalmanFilter(true)
                 .showFaceOverlay(true);
 
